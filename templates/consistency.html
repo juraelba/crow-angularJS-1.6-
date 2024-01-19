@@ -1,0 +1,45 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Consistentie controle</small>
+        </h1>
+        <flash-message duration="2000"></flash-message>
+        <div class="row">
+            <div class="container">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <select ng-model="type"
+                                class="form-control"
+                                id="type">
+                            <option ng-repeat="option in types" value="{{ option.key }}">
+                                {{ option.value }} ({{ getCounts(option.key) }})
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-12">
+                    <h2>{{ task }}</h2>
+                    <table ng-table-dynamic="nonSubmitTableParams with nonSubmitCols"
+                           ng-show="nonSubmitCols.length > 0"
+                           show-filter="true"
+                           class="table table-bordered table-striped"
+                           style="font-size: 12px">
+                        <tr ng-repeat="row in $data">
+                            <td ng-repeat="col in $columns">
+                                {{::row[col.field]}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>

@@ -1,0 +1,14 @@
+johan@example.com
+Pass@word1
+
+npm install -g http-server
+
+http-server -o
+
+getDocuments just gives back 3 columns:
+
+Documenttype
+Document
+FilestorageId (do not show this)
+But I see way more columns in this page. Please remove those columns.
+Also make the Document field a link, this links to GET api/factory/download-file/{filestorageid}

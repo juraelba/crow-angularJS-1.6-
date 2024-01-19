@@ -1,0 +1,1117 @@
+<ul class="nav nav-tabs">
+    <li ng-class="(nameId == 'child'? (getActive(tabs, key) ? 'active':'') : (keyActive==key?'active':''))"
+        ng-repeat="(key, tab) in tabs"
+        ng-if="tab.Parent==null && !tab.hideTab"
+        ng-hide="(tab.projectType == 'intern' && tab.Id == 2) || (tab.Id==5 && tab.financiering == null)">
+        <a href="#{{ nameId }}{{ key }}"
+           ng-click="$event.preventDefault(); setTabActive(key)"
+           data-toggle="tab"
+           ng-style="{'color':getTabColor(tab)}">
+            {{ tab.Label }}
+        </a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane"
+         ng-class="(nameId == 'child'? (getActive(tabs, key)?'active':'') : (keyActive==key?'active':''))"
+         ng-repeat="(key, tab) in tabs"
+         ng-if="tab.Parent==null && !tab.hideTab"
+         id="{{ nameId }}{{ key }}" ng-style="tab.Id==5 && {'color':textColor}">
+        <div class="row" style="padding-top: 20px" ng-if="tab.Id==1">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label for="Year">Jaar</label>
+                    <div>
+                        <select ng-model="year.selected"
+                                ng-change="changeYear()"
+                                class="form-control selectFase"
+                                ng-disabled="form.Readonly"
+                                id="Year"
+                                ng-options="option.key as option.value for option in years"
+                                required>
+                            <!--<option value="">Project totaal</option>-->
+                            <!--<option></option>-->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 20px" ng-if="tab.Id==122">
+            <div class="col-lg-12">
+                <table ng-table-dynamic="tableParams with cols" show-filter="false"
+                    class="table table-bordered table-striped" style="font-size: 12px">
+                 <thead>
+                     <tr>
+                         <th>Documenttype</th>
+                         <th>Document</th>
+                     </tr>
+                 </thead>
+                 <tr ng-repeat="row in tab.documentData">
+                     <td>{{::row.documenttype}}</td>
+                     <td>
+                         <a href ng-click="getDocfile(row.FileStorageId)">{{::row.documentname}}</a>
+                     </td>
+                 </tr>
+             </table>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 20px" ng-if="tab.construction.mainForm">
+            <div class="col-lg-12" ng-if="tab.construction.mainForm.length>0">
+                <div class="form-group" ng-repeat="form in tab.construction.mainForm">
+                    <label for="Year"
+                           ng-if="form.Fieldtype=='singleselect' && form.Visible">Jaar</label>
+                    <div>
+                        <select ng-if="form.Fieldtype=='singleselect' && form.Visible"
+                                ng-model="year.selected"
+                                ng-change="changeYear()"
+                                class="form-control selectFase"
+                                ng-disabled="form.Readonly"
+                                id="Year"
+                                ng-options="option.key as option.value for option in years"
+                                required>
+                            <!--<option value="">Project totaal</option>-->
+                            <!--<option></option>-->
+                        </select>
+                    </div>
+                    <label for="{{ form.Fieldlabel }}"
+                           ng-if="form.Fieldtype=='singleselect' && form.Visible">{{
+                        form.Fieldlabel }}</label>
+                    <div>
+                        <select ng-if="form.Fieldtype=='singleselect' && form.Visible"
+                                ng-class="{red_border1: model[form.Fieldname]===undefined && form.Fieldtype === 'singleselect'}"
+                                ng-model="faseValue.selected"
+                                ng-change="changeFase()"
+                                class="form-control selectFase"
+                                ng-disabled="form.Readonly"
+                                id="{{ form.Fieldlabel }}"
+                                ng-options="option.key as option.value for option in fases"
+                                required>
+                            <option value="" selected></option>
+                            <!--<option value="">Project totaal</option>-->
+                            <!--<option></option>-->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <fieldset ng-disabled="!editEnabledForTab(tab)"
+                  ng-hide="tab.fase === 0 && tab.Id !== 121 && tab.Id !== 1">
+            <div class="row" style="padding-top: 20px"
+                 ng-if="tab.Id==5 && tab.totalFieldsFase">
+                <div class="col-lg-12">
+                    <div class="form-group" ng-repeat="(keyTotal, valueTotal) in tab.totalFieldsFase">
+                        <label for="totalTeFase">{{ keyTotal }}</label>
+                        <input type="text"
+                               class="form-control"
+                               id="totalTeFase"
+                               placeholder="{{ keyTotal }}"
+                               ng-disabled="true"
+                               value="{{ valueTotal }}">
+                    </div>
+
+                    <h4>{{ typeproject ? 'Project' : 'Fase' }} financiering</h4>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th ng-repeat="(key, item) in financieringoverzicht[0]">{{ key }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="item in financieringoverzicht">
+                            <td ng-class="{'pullRight': key !== 'jaar' && key !== 'fase'}"
+                                ng-repeat="(key, value) in item">
+                                {{ value }}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 20px" ng-if="tab.construction.grid">
+                <div class="col-lg-12"
+                     ng-if="(tab.Id!=6 && tab.Id != 5)">
+                    <!--&& tab.Id != 11 && tab.Id != 10 && tab.Id != 7 && tab.Id != 8-->
+                    <a href class="btn btn-success" ng-click="showAdditional(tab.Id, tab.FunctiePost, {})"
+                       ng-if="tab.Id != 1 && tab.FunctiePost">
+                        {{ (tab.Id == 11 ? 'OOP regel toevoegen' : 'Nieuwe rol') }}
+                    </a>
+                    <a href class="btn btn-success"
+                       ng-if="tab.Id == 1 && editEnabledForTab(tab)"
+                       ng-click="showAdditional(tab.Id, tab.FunctiePost, {})">
+                        {{ 'Nieuwe fase' }}
+                    </a>
+                    <table ng-table-dynamic="tab.construction.grid.table with tab.construction.grid.tableCols"
+                           show-filter="false"
+                           class="table table-bordered faseVisible"
+                           ng-class="{'table-striped': tab.Id != 4}"
+                           style="font-size: 12px">
+                        <tbody>
+                        <tr ng-repeat="row in $data"
+                            ng-show="(tab.Id != 4 || (row.visible && tab.Id == 4)) && row.Id!=='BedragSum' && row.id!=='ResultaatSum'">
+                            <td class="editRow"
+                                ng-if="editButtonShowConclusion(tab, row) && tab.Id!=9"
+                                ng-click="showAdditional(tab.Id, tab.FunctiePut, row)"
+                            >
+                                <i class="fa fa-edit"></i>
+                                <!--{{ tab.Id }}-->
+                            </td>
+                            <td class="editRow"
+                                ng-if="editButtonShowConclusion(tab, row) && tab.Id == 9 && tab.fase != ''"
+                                ng-click="showAdditional(tab.Id, tab.FunctiePut, row)"
+                            >
+                                <i class="fa fa-edit"></i>
+                            </td>
+                            <td class="removeRow"
+                                ng-if="tab.Id == 11 && editButtonShowConclusion(tab, row)"
+                                ng-click="removeItem(row.Id, tab.Id)">
+                                <i class="fa fa-trash"></i>
+                            </td>
+                            <td class="editRow" ng-if="!editButtonShowConclusion(tab, row) && tab.Id === 121"></td>
+
+                            <td class="plusRow" ng-if="tab.Id == 1" ng-click="showFaseDetails(tab.Id, row)"><i
+                                    class="fa fa-plus"></i></td>
+                            <td class="plusRow" ng-if="row.master && row.master!=2"
+                                ng-click="showUnderMaster(tab.Id, row)">
+                                <i class="fa fa-plus" ng-show="row.showPlus"></i>
+                            </td>
+                            <td ng-if="row.master==0 || row.master==2">&nbsp;</td>
+                            <td ng-repeat="(keyCol, col) in $columns"
+                                ng-style="row.master && {'font-weight':'bold'}"
+                                ng-class="{'pullRight': pullRight.indexOf(col.field)>=0}">
+                                <span ng-show="tab.Id != 1 || (((row.visible && faseUnvisible.indexOf(keyCol)>=0)
+                                || (faseUnvisible.indexOf(keyCol)<0)) && tab.Id == 1)">
+                                    {{ ::row[col.field] }}
+                                </span>
+                                <span ng-show="!(tab.Id != 1 || (((row.visible && faseUnvisible.indexOf(keyCol)>=0)
+                                || (faseUnvisible.indexOf(keyCol)<0)) && tab.Id == 1))">
+                                    {{ substr(row[col.field]) }}
+                                </span>
+                            </td>
+                            <td ng-if="tab.Id == 1 && deleteIconfase" ng-click="removeItem(row.ID, tab.Id)">
+                                <i class="fa fa-trash"></i>
+                            </td>
+                            <td ng-if="tab.Id == 121 && editEnabledForTab(tab) && row['Geschreven uren'] === 0" ng-click="removeItem(row.id, tab.Id)">
+                                <i class="fa fa-trash"></i>
+                            </td>
+
+                            <td ng-if="tab.Id == 121 && editEnabledForTab(tab) && row['Geschreven uren'] !== 0"></td>
+                        </tr>
+
+                        <tr ng-repeat="row in $data" ng-show="row.Id=='BedragSum'">
+                            <!--<td ng-if="editForm"></td>-->
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td style="font-weight: bold; border: 0" class="pull-right">{{ ::row['Bedrag'] }}</td>
+                        </tr>
+
+                        <tr ng-repeat="row in $data" ng-show="row.id=='ResultaatSum'">
+                            <td></td>
+                            <td style="font-weight: bold">{{ ::row['Omschrijving'] }}</td>
+                            <td></td>
+                            <td></td>
+                            <td style="font-weight: bold" class="pullRight">{{ ::row['Opbrengsten'] }}</td>
+                            <td style="font-weight: bold;" class="pullRight">{{ ::row['Kosten'] }}</td>
+                            <td style="font-weight: bold;" class="pullRight">{{ ::row['Resultaat'] }}</td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+                <div class="col-lg-12" ng-if="tab.Id==6">
+                    <a href class="btn btn-success" ng-click="showAdditional(tab.Id, tab.FunctiePost, {})"
+                       ng-if="tab.FunctiePost">
+                        Risico toevoegen
+                    </a>
+                    <table ng-table-dynamic="tab.construction.grid.table with tab.construction.grid.tableCols"
+                           show-filter="false" class="table table-bordered table-striped" style="font-size: 12px">
+                        <tr ng-repeat="row in $data">
+                            <td ng-repeat="col in $columns" ng-click="showAdditional(tab.Id, tab.FunctiePut, row)">
+                                {{::row[col.field]}}
+                            </td>
+                            <td ng-if="tab.Id == 6 && editForm" ng-click="removeItem(row.id, tab.Id)"><i
+                                    class="fa fa-trash"></i></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-lg-12" ng-if="tab.Id==5">
+                    <a href class="btn btn-success"
+                       ng-click="showAdditional(tab.Id, tab.FunctiePost, {})"
+                       ng-if="isProjectControl()">
+                        Nieuwe financiering
+                    </a>
+                    <div class="table-responsive">
+                        <table ng-table-dynamic="tab.construction.grid.table with tab.construction.grid.tableCols"
+                            show-filter="false" class="table table-bordered table-striped" style="font-size: 12px">
+                            <tr ng-repeat="row in $data" ng-show="row.id!=='BedragSum'">
+                                <!-- <td ng-repeat="col in $columns"
+                                    ng-show="col.field!='notities'"
+                                    ng-class="{'pullRight': pullRight.indexOf(col.field)>=0}"
+                                    ng-style=" checkAmount(col.field, row[col.field]) && {'color':'red'}">
+                                    {{::row[col.field]}}
+                                </td> -->
+                                <td ng-class="{'pullRight': pullRight.indexOf('Financiering')>=0}"
+                                    ng-style=" checkAmount('Financiering', row['Financiering']) && {'color':'red'}">
+                                    {{row['Financiering']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Type')>=0}"
+                                    ng-style=" checkAmount('Type', row['Type']) && {'color':'red'}">
+                                    {{row['Type']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Debiteurnummer')>=0}"
+                                    ng-style=" checkAmount('Debiteurnummer', row['Debiteurnummer']) && {'color':'red'}">
+                                    {{row['Debiteurnummer']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Financierder')>=0}"
+                                    ng-style=" checkAmount('Financierder', row['Financierder']) && {'color':'red'}">
+                                    {{row['Financierder']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Begroot')>=0}"
+                                    ng-style=" checkAmount('Begroot', row['Begroot']) && {'color':'red'}">
+                                    {{row['Begroot']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Toegezegd')>=0}"
+                                    ng-style=" checkAmount('Toegezegd', row['Toegezegd']) && {'color':'red'}">
+                                    {{row['Toegezegd']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Nog niet toegezegd')>=0}"
+                                    ng-style=" checkAmount('Nog niet toegezegd', row['Nog niet toegezegd']) && {'color':'red'}">
+                                    {{row['Nog niet toegezegd']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Mutaties')>=0}"
+                                    ng-style=" checkAmount('Mutaties', row['Mutaties']) && {'color':'red'}">
+                                    {{row['Mutaties']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Mutaties')>=0}"
+                                    ng-style=" checkAmount('Mutaties', row['Mutaties']) && {'color':'red'}">
+                                    {{row['Totale financiering']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Nog te factureren')>=0}"
+                                    ng-style=" checkAmount('Nog te factureren', row['Nog te factureren']) && {'color':'red'}">
+                                    {{row['Nog te factureren']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Nog te betalen')>=0}"
+                                    ng-style=" checkAmount('Nog te betalen', row['Nog te betalen']) && {'color':'red'}">
+                                    {{row['Nog te betalen']}}
+                                </td>
+                                <!-- <td ng-class="{'pullRight': pullRight.indexOf('Batig Saldo')>=0}"
+                                    ng-style=" checkAmount('Batig Saldo', row['Batig Saldo']) && {'color':'red'}">
+                                    {{row['Batig Saldo']}}
+                                </td> -->
+                                <td ng-class="{'pullRight': pullRight.indexOf('Mee te nemen')>=0}"
+                                    ng-style=" checkAmount('Mee te nemen', row['Mee te nemen']) && {'color':'red'}">
+                                    {{row['Mee te nemen']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('notities')>=0}"
+                                    ng-if="!rowCollapeFlag"
+                                    ng-style=" checkAmount('notities', row['notities']) && {'color':'red'}">
+                                    {{getNotities(row['notities'], row.Id)}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('notities')>=0}"
+                                    ng-if="rowCollapeFlag"
+                                    ng-style=" checkAmount('notities', row['notities']) && {'color':'red'}">
+                                    {{row['notities']}}
+                                </td>
+                                <td ng-class="{'pullRight': pullRight.indexOf('Boekjaar')>=0}"
+                                    ng-style=" checkAmount('Boekjaar', row['Boekjaar']) && {'color':'red'}">
+                                    {{row['Boekjaar']}}
+                                </td>
+                                <td ng-if="isProjectControl() && row.Id"
+                                    ng-click="showAdditional(tab.Id, tab.FunctiePut, row)">
+                                    <i class="fa fa-edit"></i>
+                                </td>
+                                <td ng-if="isProjectControl() && row.Id" ng-click="removeItem(row.Id, tab.Id)">
+                                    <i class="fa fa-trash"></i>
+                                </td>
+                                <td  ng-if="isProjectControl() && row.Id" ng-click="collapse(row.Id, tab.Id)">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in $data" ng-show="row.id=='BedragSum'">
+                                <td>Totaal</td>
+                                <td></td>
+                                <td></td>
+                                <td ng-if="row['Debiteurnummer'] !== undefined"></td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Begroot', row['Begroot']) && {'color':'red'}"></td>>{{ ::row['Begroot'] }}</td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Toegezegd', row['Toegezegd']) && {'color':'red'}">{{ ::row['Toegezegd'] }}</td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Nog niet toegezegd', row['Nog niet toegezegd']) && {'color':'red'}">{{ ::row['Nog niet toegezegd'] }}</td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Mutaties', row['Mutaties']) && {'color':'red'}">{{ ::row['Mutaties'] }}</td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Nog te betalen', row['Nog te betalen']) && {'color':'red'}">{{ ::row['Totale financiering'] }}</td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Nog te factureren', row['Nog te factureren']) && {'color':'red'}">{{ ::row['Nog te factureren'] }}</td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Nog te betalen', row['Nog te betalen']) && {'color':'red'}">{{ ::row['Nog te betalen'] }}</td>
+                                <!-- <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Batig Saldo', row['Batig Saldo']) && {'color':'red'}">{{ ::row['Batig Saldo'] }}</td> -->
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Mee te nemen', row['Mee te nemen']) && {'color':'red'}">{{ ::row['Mee te nemen'] }}</td>
+                            </tr>
+                            <tr ng-repeat="row in $data" ng-show="row.id=='BedragSum'"> 
+                                <td>Mee te nemen financiering boekjaar</td>
+                                <td></td>
+                                <td></td>
+                                <td ng-if="row['Debiteurnummer'] !== undefined"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('Mee te nemen', row['Mee te nemen']) && {'color':'red'}">{{ ::row['Mee te nemen'] }}</td>
+                            </tr>
+                            <tr ng-repeat="row in $data" ng-show="row.id=='BedragSum'">
+                                <td>Eindstand boekjaar</td>
+                                <td></td>
+                                <td></td>
+                                <td ng-if="row['Debiteurnummer'] !== undefined"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="font-weight: bold;" class="pullRight" ng-style="checkAmount('EindstandFin', row['EindstandFin']) && {'color':'red'}">{{ ::row['EindstandFin'] }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- Inline edit tabs Begroting kst->OOP, Begroting kst->Uren, Opbrengsten->Uren, Opbrengsten->OOP-->
+                <!--<div ng-if="tab.Id==11 || tab.Id==10 || tab.Id==7 || tab.Id==8"-->
+                <!--class="col-lg-12">-->
+                <!--<fieldset ng-disabled="!(((tab.FunctiePut != '' && editForm && [7, 8, 9, 10, 11, 12].indexOf(tab.Id) < 0)-->
+                <!--|| (([7, 8, 9, 10, 11, 12].indexOf(tab.Id) >= 0) && tab.fase)))">-->
+                <!--<batcheditable-->
+                <!--data="tab.construction.grid.table.settings().dataset"-->
+                <!--cols="tab.cols"-->
+                <!--save-fn="saveBatch(data, tab)"></batcheditable>-->
+                <!--</fieldset>-->
+                <!--</div>-->
+                <!-- ------------------------->
+
+                <div class="modal modalAdditional modalForm{{ tab.Id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span class="close">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form ng-submit="formStart(tab.Id)" ng-if="tab.Naam!='Organisatie' && tab.Naam!='Uren'
+                        && tab.Naam!='OOP'  && tab.Naam!='Kennis' && tab.Naam!='Risicos' && tab.Naam!='Financiering'">
+                                <div class="form-group" ng-repeat="form in tab.construction.grid.form">
+                                    <label for="{{ form.Fieldlabel }}">
+                                        {{ form.Fieldlabel=='Resultaat'
+                                        ? 'Minimaal opleverniveau'
+                                        : (form.Fieldlabel=='Naam' ? 'Naam fase' :
+                                        (form.Fieldlabel=='Doel' ? 'Resultaat' : form.Fieldlabel)) }}
+                                    </label>
+                                    <input ng-if="form.Fieldtype!='singleselect' && form.Fieldtype!='multiselect' && form.Fieldtype!='date' && form.Visible
+                                        && form.Fieldname != 'Doel' && form.Fieldname != 'Resultaat' &&
+                                        form.Fieldname !='Draagvlak' && form.Fieldname !='Kwaliteit' && form.Fieldname !='Afname'"
+                                           type="{{ form.Fieldtype=='int'?'number':'text' }}"
+                                           class="form-control"
+                                           id="{{ form.Fieldlabel }}"
+                                           placeholder="{{ (form.Fieldlabel=='Naam' ? 'Naam fase' : form.Fieldlabel) }}"
+                                           ng-disabled="form.Readonly"
+                                           ng-model="formActive[form.Fieldname]"
+                                           required>
+
+                                    <div ng-if="form.Fieldname =='Draagvlak' || form.Fieldname =='Kwaliteit' || form.Fieldname =='Afname'"
+                                         class="tooltip_100">
+
+                                        <div tooltips
+                                             tooltip-template="{{ form.Fieldname=='Draagvlak' ? 'welke partijen doen mee? Wat is hun rol?' :
+                                          ( form.Fieldname=='Kwaliteit' ? 'minimaal kwaliteitsniveau (SMART) eventueel aangevuld met gewenst kwaliteitsniveau (SMART)' :
+                                          ( form.Fieldname=='Afname' ? 'beoogde bereik (kwantitatief): bijvoorbeeld 100 deelnemers, 1.000 downloads' : '')) }}"
+                                        >
+                                            <md-input-container class="md-block">
+                                        <textarea
+                                                rows="5"
+                                                mb-autosize
+                                                md-select-on-focus
+                                                id="{{ form.Fieldlabel }}"
+                                                aria-label="{{ form.Fieldlabel }}"
+                                                ng-disabled="form.Readonly"
+                                                ng-model="formActive[form.Fieldname]"
+                                                required></textarea>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+
+
+                                    <md-input-container class="md-block">
+                                <textarea ng-if="(form.Fieldtype=='text' && form.Visible && (form.Fieldname=='Doel' || form.Fieldname=='Resultaat' ||
+                                 form.Fieldname=='Draagvlak' || form.Fieldname=='Kwaliteit' || form.Fieldname=='Afname')) &&
+                                 form.Fieldname !='Draagvlak' && form.Fieldname !='Kwaliteit' && form.Fieldname !='Afname'"
+                                          rows="5"
+                                          mb-autosize
+                                          md-select-on-focus
+                                          md-select-on-focus
+                                          placeholder="{{ form.Fieldname=='Draagvlak' ? 'welke partijen doen mee? Wat is hun rol?' :
+                                          ( form.Fieldname=='Kwaliteit' ? 'minimaal kwaliteitsniveau (SMART) eventueel aangevuld met gewenst kwaliteitsniveau (SMART)' :
+                                          ( form.Fieldname=='Afname' ? 'beoogde bereik (kwantitatief): bijvoorbeeld 100 deelnemers, 1.000 downloads' : '')) }}"
+                                          id="{{ form.Fieldlabel }}"
+                                          aria-label="{{ form.Fieldlabel }}"
+                                          ng-disabled="form.Readonly"
+                                          ng-model="formActive[form.Fieldname]"
+                                          required></textarea>
+                                    </md-input-container>
+
+                                    <!--<md-content ng-if="form.Fieldtype=='date' && form.Visible">-->
+                                    <!--<md-datepicker ng-model="formActive[form.Fieldname]"-->
+                                    <!--id="{{ form.Fieldlabel }}"-->
+                                    <!--md-placeholder="{{ form.Fieldlabel }}"-->
+                                    <!--ng-required="true"-->
+                                    <!--&gt;</md-datepicker>-->
+                                    <!--</md-content>-->
+
+                                    <input ng-model="formActive[form.Fieldname]"
+                                           ng-if="form.Fieldtype=='date' && form.Visible"
+                                           datepicker
+                                           ng-change="checkDate(form.Fieldname)"
+                                           type="text"
+                                           required
+                                           class="form-control">
+
+                                    <select ng-if="form.Fieldtype=='singleselect' && form.Visible"
+                                            ng-model="formActive[form.Fieldname]"
+                                            class="form-control"
+                                            ng-disabled="form.Readonly"
+                                            id="{{ form.Fieldlabel }}"
+                                            ng-options="option.key as option.value for option in form.options"
+                                            required>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="form-group" ng-if="tab.Id == 1">
+                                    <label for="Boekjaar">Boekjaar</label>
+
+                                    <input ng-model="formActive['Boekjaar']"
+                                           class="form-control"
+                                           disabled="disabled"
+                                           id="Boekjaar"
+                                           type="text"
+                                           required>
+                                </div>
+                                <div class="form-group" ng-if="tab.Id == 1">
+                                    <md-checkbox
+                                            md-no-ink aria-label="Educatie"
+                                            ng-model="formActive['Educatie']"
+                                            ng-true-value="'Ja'" ng-false-value="'Nee'"
+                                            class="md-primary">
+                                        <strong>Zichtbaar voor team educatie?</strong>
+                                    </md-checkbox>
+                                </div>
+
+                                <div class="form-group" ng-if="tab.Id == 1">
+                                    <md-checkbox
+                                            md-no-ink aria-label="kennisverspreiding"
+                                            ng-model="formActive['Kennisverspreiding']"
+                                            ng-true-value="'Ja'" ng-false-value="'Nee'"
+                                            class="md-primary">
+                                        <strong>Zichtbaar voor team kennisverspreiding?</strong>
+                                    </md-checkbox>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+                            <form ng-if="tab.Naam=='Organisatie'" ng-submit="formStart(tab.Id)">
+                                <div class="form-group tooltip_100">
+                                    <label for="rol">Rol</label>
+                                    <br>
+                                    <div tooltips
+                                         tooltip-template="Geef aan welke rollen er vervuld moeten worden binnen dit project en welke medewerker(s) van CROW dat gaan doen."
+                                    >
+                                        <select required
+                                                ng-model="formActive['functie']"
+                                                class="form-control"
+                                                id="rol"
+                                                ng-options="option.key as option.value for option in tab.functies"
+                                                >
+                                            <option></option>
+                                            <!--<option value="" disabled selected>Geef aan welke rollen er vervuld moeten worden binnen dit project en welke medewerker(s) van CROW dat gaan doen.-->
+                                            <!--</option>-->
+                                            <!--<option></option>-->
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="MedewerkerId">Medewerker</label>
+                                    <select ng-model="formActive['medewerker']"
+                                            chosen
+                                            data-placeholder-text-single="'Kies een medewerker'"
+                                            class="form-control"
+                                            id="MedewerkerId"
+                                            ng-options="option.key as option.value for option in tab.medewerkersModal"
+                                            required>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Taken">Taken, bevoegdheden en verantwoordelijkheden</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Taken"
+                                           placeholder="Taken, bevoegdheden en verantwoordelijkheden"
+                                           ng-model="formActive['taken']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+                            <form ng-if="tab.Id==10" ng-submit="beforeFormStart(tab)">
+                                <div class="form-group">
+                                    <label for="Omschrijving">Omschrijving</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Omschrijving"
+                                           placeholder="Omschrijving"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Omschrijving']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Medewerker">Medewerker</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Medewerker"
+                                           placeholder="Medewerker"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Medewerker']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Kostprijstarief">Kostprijs tarief</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Kostprijstarief"
+                                           placeholder="Kostprijs tarief"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Kostprijs tarief']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Aantaluren">Aantal uren</label>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="Aantaluren"
+                                           placeholder="Aantal uren"
+                                           ng-model="formActive['Aantal uren']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Kosten">Kosten</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Kosten"
+                                           placeholder="Kosten"
+                                           ng-disabled="true"
+                                           value="{{ total() }}">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+                            <form ng-if="tab.Id==11" ng-submit="formStart(tab.Id)">
+                                <div class="form-group" ng-if="query=='putKostenOOP'">
+                                    <label for="Functie">Inkoop</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Functie"
+                                           placeholder="Functie"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Inkoop']"
+                                           required>
+                                </div>
+                                <div class="form-group" ng-if="query=='postKostenOOP'">
+                                    <label>Inkoop</label>
+                                    <select ng-model="formActive['inkoop']"
+                                            class="form-control"
+                                            ng-options="option.key as option.value for option in tab.inkoops">
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Bedrag">Bedrag</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Bedrag"
+                                           placeholder="Bedrag"
+                                           ng-model="formActive['Bedrag ']"
+                                           required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Leverancier">Leverancier</label>
+                                    <select chosen
+                                            ng-model="formActive['leverancier']"
+                                            class="form-control"
+                                            id="Leverancier"
+                                            ng-options="option.key as option.value for option in tab.leveranciers">
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+                            <form ng-if="tab.Id==7" ng-submit="beforeFormStart(tab)">
+                                <div class="form-group">
+                                    <label for="Omschrijving">Omschrijving</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Omschrijving"
+                                           placeholder="Omschrijving"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Omschrijving']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Medewerker">Medewerker</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Medewerker"
+                                           placeholder="Medewerker"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Medewerker']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Aantaluren">Aantal uren</label>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="Aantaluren"
+                                           placeholder="Aantal uren"
+                                           ng-model="formActive['Aantal uren']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Tarief">Tarief</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Tarief"
+                                           placeholder="Tarief"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Tarief']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Opbrengst">Opbrengst</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Opbrengst"
+                                           placeholder="Opbrengst"
+                                           ng-disabled="true"
+                                           value="{{ total_obrengst() }}">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+                            <form ng-if="tab.Id==8" ng-submit="formStart(tab.Id)">
+                                <div class="form-group">
+                                    <label for="Omschrijving">Inkoop</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Omschrijving"
+                                           placeholder="Omschrijving"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Inkoop']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Kosten">Kosten</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Kosten"
+                                           placeholder="Kosten"
+                                           ng-model="formActive['Kosten ']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Marge">Marge</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Marge"
+                                           placeholder="Marge"
+                                           ng-model="formActive['Marge ']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Opbrengst">Opbrengst</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Opbrengst"
+                                           placeholder="Opbrengst"
+                                           ng-disabled="true"
+                                           value="{{ total_marge() }}">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+
+                            <form ng-if="tab.Id==9" ng-submit="formStart(tab.Id)">
+                                <div class="form-group">
+                                    <label for="Omschrijving">Omschrijving</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Omschrijving"
+                                           placeholder="Omschrijving"
+                                           ng-disabled="true"
+                                           ng-model="formActive['Omschrijving']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Aantal">Aantal</label>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="Aantal"
+                                           placeholder="Aantal"
+                                           ng-model="formActive['Aantal']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Tarief">Tarief</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Tarief"
+                                           placeholder="Tarief"
+                                           ng-model="formActive['Tarief']"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Opbrengst">Opbrengst</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="Opbrengst"
+                                           placeholder="Opbrengst"
+                                           ng-disabled="true"
+                                           value="{{ total_kennis() }}">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+
+                            <form ng-if="tab.Id==6" ng-submit="formStart(tab.Id)">
+                                <div class="form-group">
+                                    <label for="Omschrijving">Omschrijving</label><br>
+                                    <md-input-container class="md-block">
+                                    <textarea ng-model="formActive['Omschrijving']"
+                                              rows="5"
+                                              mb-autosize
+                                              md-select-on-focus
+                                              id="Omschrijving"
+                                              aria-label="Omschrijving"
+                                              required></textarea>
+                                    </md-input-container>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Gevolg">Gevolg</label>
+                                    <md-input-container class="md-block">
+                                    <textarea ng-model="formActive['Gevolg']"
+                                              rows="5"
+                                              mb-autosize
+                                              md-select-on-focus
+                                              id="Gevolg"
+                                              aria-label="Gevolg"
+                                              required></textarea>
+                                    </md-input-container>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Inschatting">Inschatting</label>
+
+                                    <div class="tooltip_100">
+
+                                        <div tooltips tooltip-template="de kans dat het risico zich voor zal doen">
+                                            <md-input-container class="md-block">
+                                                <textarea ng-model="formActive['Inschatting']"
+                                                          rows="5"
+                                                          mb-autosize
+                                                          md-select-on-focus
+                                                          id="Inschatting"
+                                                          aria-label="Inschatting"
+                                                          required>
+                                                </textarea>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="Beheermaatregel">Beheermaatregel</label>
+                                    <md-input-container class="md-block">
+                                    <textarea ng-model="formActive['Beheermaatregel']"
+                                              rows="5"
+                                              mb-autosize
+                                              md-select-on-focus
+                                              id="Beheermaatregel"
+                                              aria-label="Beheermaatregel"
+                                              required></textarea>
+                                    </md-input-container>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Niveau">Niveau</label>
+                                    <div class="tooltip_100">
+
+                                        <div tooltips tooltip-template="hoe groot zijn de gevolgen voor het project">
+
+                                            <select ng-model="formActive['Niveau']"
+                                                    class="form-control"
+                                                    id="Niveau"
+                                                    required>
+                                                <!--<option value="" disabled>hoe groot zijn de gevolgen voor het project</option>-->
+                                                <option value="Laag">Laag</option>
+                                                <option value="Middel">Middel</option>
+                                                <option value="Hoog">Hoog</option>
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success center-block">Bewaren</button>
+                                </div>
+                            </form>
+
+                            <form ng-if="tab.Id==5" ng-submit="formStart(tab.Id)">
+                                <fieldset ng-disabled="!editForm">
+                                    <div class="form-group">
+                                        <label for="toegezegd">Boekjaar</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="boekjaar"
+                                               placeholder="Boekjaar"
+                                               ng-model="formActive['Boekjaar']"
+                                               required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Financiering">Financiering</label>
+                                        <select ng-model="formActive['Financiering']"
+                                                class="form-control"
+                                                id="Financiering"
+                                                ng-change="showFinanceForm()"
+                                                required>
+                                            <option value="extern">extern</option>
+                                            <option value="intern">intern</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" ng-if="extern">
+                                        <label for="type">Type financiering</label>
+                                        <select ng-model="formActive['Type']"
+                                                class="form-control"
+                                                id="type"
+                                                ng-change="typeFinance()"
+                                                ng-required="true">
+                                            <option value="" disabled selected></option>
+                                            <option value="deelcollectieven">deelcollectieven</option>
+                                            <option value="individueel">individueel</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" ng-if="extern && deelcollectieven && !individueel">
+                                        <label for="Financier">Financier</label>
+                                        <select ng-model="formActive['Financierder']"
+                                                chosen
+                                                data-placeholder-text-single="'Kies een financier'"
+                                                class="form-control"
+                                                id="Financier"
+                                                ng-options="option.key as option.value for option in tab.deelcollectieven"
+                                                ng-change="showOtherFields()"
+                                                >
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" ng-if="extern && individueel && !deelcollectieven">
+                                        <label for="Financier">Financier</label>
+                                        <select ng-model="formActive['Financierder']"
+                                                chosen
+                                                data-placeholder-text-single="'Kies een financier'"
+                                                class="form-control"
+                                                id="Financier"
+                                                ng-options="option.key as option.value for option in tab.financiers"
+                                                ng-change="showOtherFields()"
+                                                required>
+                                            <option></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" ng-if="intern">
+                                        <label for="Financier">Financier</label>
+                                        <select ng-model="formActive['Financierder']"
+                                                chosen
+                                                data-placeholder-text-single="'Kies een financier'"
+                                                class="form-control"
+                                                id="Financier"
+                                                ng-options="option.key as option.value for option in tab.internfinanciers"
+                                                ng-change="showOtherFields()"
+                                                required>
+                                            <option></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" ng-if="otherFields && extern">
+                                        <label for="begroot">Begroot bedrag</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="begroot"
+                                               placeholder="Begroot bedrag"
+                                               ng-model="formActive['Begroot']"
+                                               required
+                                               ng-change="changeToCurrency('Begroot')"
+                                               >
+                                    </div>
+                                    <div class="form-group" ng-if="otherFields">
+                                        <label for="toegezegd">Bedrag toegezegd</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="toegezegd"
+                                               placeholder="Bedrag toegezegd"
+                                               ng-model="formActive['Toegezegd']"
+                                               required
+                                               ng-change="changeToCurrency('Toegezegd')"
+                                               >
+                                    </div>
+                                    <div class="form-group" ng-if="otherFields && extern">
+                                        <label for="onzeker">Bedrag nog niet toegezegd</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="onzeker"
+                                               placeholder="Bedrag onzeker"
+                                               ng-disabled="true"
+                                               value="{{  total_finance() }}">
+                                    </div>
+                                    <div class="form-group" ng-if="extern">
+                                        <label for="type">Nog te factureren</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="factureren"
+                                               ng-model="formActive['tefactureren']"
+                                               placeholder="Nog te factureren"
+                                               ng-change="changeToCurrency('tefactureren')"
+                                               >
+                                    </div>
+                                    <div class="form-group" ng-if="extern">
+                                        <label for="type">Nog te betalen</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="betalen"
+                                               placeholder="Nog te betalen"
+                                               ng-model="formActive['tebetalen']"
+                                               ng-change="changeToCurrency('tebetalen')"
+                                               >
+                                    </div>
+                                    <!-- <div class="form-group" ng-if="extern">
+                                        <label for="type">Batig Saldo</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="batigsaldo"
+                                               placeholder="Nog te betalen"
+                                               ng-model="formActive['batigsaldo']"
+                                               ng-change="changeToCurrency('batigsaldo')"
+                                               >
+                                    </div> -->
+                                    <div class="form-group" ng-if="extern">
+                                        <label for="type">Mee te nemen financiering</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="nemen"
+                                               placeholder="Mee te nemen financiering"
+                                               ng-model="formActive['meetenemen']"
+                                               ng-change="changeToCurrency('meetenemen')"
+                                               >
+                                    </div>
+                                    <div class="form-group" ng-if="extern">
+                                        <label for="type">Mutaties</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="mutaties"`
+                                               placeholder="Mutaties"
+                                               ng-model="formActive['mutaties']"
+                                               ng-change="changeToCurrency('mutaties')"
+                                               >
+                                    </div>
+                                    <div class="form-group" ng-if="extern">
+                                        <label for="type">Notitie</label>
+                                        <md-input-container class="md-block">
+                                            <textarea ng-model="formActive['not_ities']"
+                                                      rows="5"
+                                                      mb-autosize
+                                                      md-select-on-focus`
+                                                      id="notities"
+                                                      aria-label="notities"
+                                                      ></textarea>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-success center-block">Bewaren</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--</fieldset>-->
+            <div class="row" style="padding-top: 20px" ng-if="tab.tabs">
+                <div class="col-lg-12">
+                    <tabs tab="tab.tabs" key="childKey" name="'child'" remove-fn="removeItem(id, tabId)"
+                          update-fn="updateCtrlFn(form, query)" editform="editForm"></tabs>
+                </div>
+            </div>
+            <fieldset ng-disabled="!editForm" ng-hide="tab.fase === 0 && tab.Id !== 121 && tab.Id !== 1">
+                <div class="row" style="padding-top: 20px" ng-if="tab.construction.mainForm">
+                    <div class="col-lg-12" ng-if="tab.construction.mainForm.length>0">
+                        <div class="form-group" ng-repeat="form in tab.construction.mainForm">
+                            <label for="{{ form.Fieldlabel }}" ng-if="form.Fieldtype!='singleselect' && form.Visible">
+                                {{ form.Fieldlabel }}
+                            </label>
+                            <input ng-if="form.Fieldtype!='singleselect' && form.Fieldtype!='multiselect' && form.Visible"
+                                   type="{{ form.Fieldtype=='int'?'number':'text' }}" class="form-control"
+                                   id="{{ form.Fieldlabel }}"
+                                   placeholder="{{ form.Fieldlabel }}"
+                                   ng-disabled="form.Readonly"
+                                   ng-model="form.option"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="modal begrotingKstPopup" ng-if="tab.Id===10">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form ng-submit="preFormStart(currentPopup.id, tab)">
+                            <div class="form-group">
+                                <label>{{ currentPopup.question }}</label>
+                                <select ng-model="currentPopup.key"
+                                        class="form-control"
+                                        ng-change="questionChange(tab)"
+                                        required
+                                        ng-options="option.key as option.value for option in currentPopup.options">
+                                </select>
+                            </div>
+                            <div class="form-group" ng-if="currentPopup.key === 1">
+                                <label>Fases</label>
+                                <select ng-model="currentPopup.fase"
+                                        class="form-control"
+                                        ng-change="getOrganisatieDropdown(tab)"
+                                        required
+                                        ng-options="option.key as option.value for option in getFasesDropdown">
+                                </select>
+                            </div>
+                            <div class="form-group" ng-if="showFase">
+                                <label>Functie / medewerker</label>
+                                <select ng-model="currentPopup.organisatie"
+                                        class="form-control"
+                                        required
+                                        ng-options="option.key as option.value for option in organisatieDropdown">
+                                </select>
+                            </div>
+                            <div class="form-group" ng-if="currentPopup.organisatie">
+                                <button class="btn btn-success center-block">Bewaren</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>

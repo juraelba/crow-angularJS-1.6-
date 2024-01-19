@@ -1,0 +1,62 @@
+<section class="sidebar">
+    <ul class="sidebar-menu">
+        <li>
+            <a href ng-click="go('/users')">
+                <i class="fa fa-th"></i> <span>Gebruikers</span>
+            </a>
+        </li>
+        <li ng-repeat="item in menu">
+            <a href ng-click="go('/page/' + item.PageId)"
+               ng-if="item.Label != 'Gebruikers' && item.Label != 'Dashboard'
+               && item.Label != 'Datawarehouse' && item.Label != 'Projectbeheersing'
+                && item.Label != 'Beheer'">
+                <i class="fa fa-th"></i> <span>{{ item.Label }}</span>
+            </a>
+        </li>
+        <li ng-repeat="item in menu">
+            <a href ng-click="$event.preventDefault();" ng-if="item.Label == 'Dashboard'">
+                <i class="fa fa-th"></i>
+                <span>{{ item.Label }}</span>
+                <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+            </a>
+            <ul class="treeview-menu" style="display: none;">
+                <li ng-repeat="element in dashboard">
+                    <a href ng-click="go('/kpi/' + element.Id)"><i class="fa fa-circle-o"></i> {{ element.Naam }}</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href ng-click="$event.preventDefault();">
+                <i class="fa fa-th"></i>
+                <span>Projectbeheersing</span>
+                <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+            </a>
+            <ul class="treeview-menu" style="display: none;">
+                <li>
+                    <a href ng-click="go('/results')"><i class="fa fa-circle-o"></i> Projectresultaten</a>
+                </li>
+                <li>
+                    <a href ng-click="go('/forecast')"><i class="fa fa-circle-o"></i> Forecast</a>
+                </li>
+            </ul>
+        </li>
+        <li ng-repeat="item in menu">
+            <a href ng-click="$event.preventDefault();" ng-if="item.Label == 'Beheer'">
+                <i class="fa fa-th"></i>
+                <span>{{ item.Label }}</span>
+                <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+            </a>
+            <ul class="treeview-menu" style="display: none;">
+                <li>
+                    <a href ng-click="go('/roll')"><i class="fa fa-circle-o"></i> Rollen</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</section>

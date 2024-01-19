@@ -1,0 +1,132 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Gebruikers</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-8">
+                    <a href class="btn btn-success" ng-click="showRegister()">Nieuwe gebruiker</a>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" placeholder="Zoeken naar..." ng-model="search"
+                           ng-change="searching()"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <a href ng-click="toggleActive()">
+                    <i class="fa fa-toggle-on fa-3x" aria-hidden="true" ng-show="collapsed"></i>
+                    <i class="fa fa-toggle-off fa-3x" aria-hidden="true" ng-show="!collapsed"></i>
+                </a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="container">
+                <table ng-table="tableParams" show-filter="false" class="table table-bordered table-striped">
+                    <tr ng-repeat="row in $data | filter:search">
+                        <td data-title="'Email'">{{ row.Email}}</td>
+                        <td data-title="'UserName'">{{ row.UserName}}</td>
+                        <td data-title="'Active'">{{ row.IsActive}}</td>
+                        <td data-title="'Role'" ng-if="true">
+                            <select class="form-control" ng-model="currentRole[row.Id]" ng-change="changeRole(row.Id)"
+                                    ng-options="option.key as option.value for option in roles">
+                                <option></option>
+                            </select>
+                        </td>
+                        <td ng-if="true">
+                            <a href class="btn btn-info" ng-click="editUser(row)">Edit</a>
+                            <a href class="btn btn-info" ng-click="setActive(row)">Set active</a>
+                            <a href class="btn btn-info" ng-click="setInactive(row)">Set inactive</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalWindow">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="registration()">
+                <div class="form-group">
+                    <label for="Email">Email address</label>
+                    <input type="email" class="form-control" id="Email" ng-model="register.email"
+                           placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="Password">Password</label>
+                    <input type="password"
+                           class="form-control"
+                           id="Password"
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"
+                           title="Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters"
+                           ng-model="register.password"
+                           placeholder="Password"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="ConfirmPassword">Confirm Password</label>
+                    <input type="password"
+                           class="form-control"
+                           id="ConfirmPassword"
+                           ng-model="register.confirmPassword"
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"
+                           title="Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters"
+                           placeholder="Confirm password"
+                           required>
+                </div>
+                <div class="row" ng-show="register.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ register.error }}
+                    </div>
+                </div>
+                <button href class="btn btn-info">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modalEditWindow">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="setPassword()">
+                <div class="form-group">
+                    <label for="Password">Password</label>
+                    <input type="password" class="form-control" id="editPassword" ng-model="edit.password"
+                           placeholder="Password" required
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"
+                           title="Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters">
+                </div>
+                <div class="form-group">
+                    <label for="ConfirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="editConfirmPassword" ng-model="edit.confirmPassword"
+                           placeholder="Confirm password" required
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"
+                           title="Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters">
+                </div>
+                <div class="row" ng-show="edit.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ edit.error }}
+                    </div>
+                </div>
+                <button href class="btn btn-info">Save</button>
+            </form>
+        </div>
+    </div>
+</div>

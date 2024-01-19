@@ -1,0 +1,340 @@
+<section class="content-header">
+    <h1>
+        <small>{{ page.pageName }}</small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="container">
+            <div class="col-lg-8">
+                <a href class="btn btn-success" ng-disabled="!isProjectControl && !isAdmin" ng-click="showAdditional({}, '')">{{
+                    page.details.pageDetails.NewLabel }}</a>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" placeholder="Zoeken naar..."
+                       ng-model="$parent.search" ng-change="searching()"/>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+            <md-checkbox
+                    ng-change="initGrid()"
+                    aria-label="0"
+                    md-no-ink
+                    ng-true-value="1" ng-false-value="0"
+                    ng-model="closedProjects.show"
+                    class="md-primary">
+                <strong>Toon afgesloten projecten</strong>
+            </md-checkbox>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container">
+            <table ng-table-dynamic="page.details.pageTable with page.details.pageTableCols" show-filter="true"
+                   class="table table-bordered table-striped" style="font-size: 12px">
+                <tr ng-repeat="row in $data">
+                    <td ng-repeat="col in $columns"
+                        ng-click="go('/page/'+page.details.pageDetails.Details+'/'+row.versieid+'/'+row.projectid)">
+                        {{::row[col.field]}}
+                    </td>
+                    <td ng-if="pageId == 1 && page.details.pageTable !== null && row.Status=='Nieuw' && checkShowDelete(row.versieid)"
+                        ng-click="removeProject(row.versieid)">
+                        <i class="fa fa-trash-o"></i>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="addProject()">
+                <div class="form-group">
+                    <label for="projectcode">Projectcode</label>
+
+                    <div class="tooltip_100">
+                        <div tooltips
+                             tooltip-template="Voor reeds bestaande projecten in het oude systeem, hetzelfde projectnummer overnemen. Bij nieuwe projecten wordt geautomatiseerd een nummer aangemaakt.">
+
+                            <input type="text" class="form-control"
+                                   id="projectcode"
+                                   disabled
+                                   placeholder="Projectcode"
+                                   ng-model="newModel.projectcode"
+                                   pattern="[a-zA-Z0-9-_ ]+"
+                                   oninvalid="setCustomValidity('De projectnaam mag de volgende tekens niet bevatten \' , &quot; .')"
+                                   oninput="setCustomValidity('')"
+                                   required>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="team">Team</label>
+
+                    <div class="tooltip_100">
+                        <div tooltips
+                             tooltip-template="Onder welk team valt dit project? Maak een keuze voor een team.">
+
+                            <select ng-model="newModel.team"
+                                    class="form-control"
+                                    id="team"
+                                    ng-options="option.key as option.value for option in teams"
+                                    required>
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectnaam">Projectnaam</label>
+                    <input type="text" class="form-control"
+                           id="projectnaam"
+                           placeholder="Projectnaam"
+                           ng-model="newModel.projectnaam"
+                           pattern="[a-zA-Z0-9-_ ]+"
+                           oninvalid="setCustomValidity('De projectnaam mag de volgende tekens niet bevatten \' , &quot; .')"
+                           oninput="setCustomValidity('')"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectmanager">Projectmanager</label>
+                    <select ng-model="newModel.projectmanager"
+                            chosen
+                            class="form-control"
+                            id="projectmanager"
+                            ng-options="option.key as option.value for option in projectmanager"
+                            required>
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="AfgestemdMet" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+                        Afgestemd met
+                    </label>
+
+                    <select chosen
+                            multiple
+                            ng-model="newModel.afgestemdMet"
+                            class="form-control"
+                            ng-options="team.key as team.value for team in afgestemdMet"
+                            id="AfgestemdMet">
+                        <option></option>
+                    </select>
+
+                    <!--<am-multiselect multiple="true"-->
+                                    <!--ms-selected="There are {{ newModel.afgestemdMet.length }} Afgestemd met(s) selected. {{ allSelected }}"-->
+                                    <!--id="AfgestemdMet"-->
+                                    <!--ng-model="newModel.afgestemdMet" ms-header="geef aan welke ondersteunende diensten/teams betrokken zijn bij dit project"-->
+                                    <!--template-url="templates/multiselect.tmpl.html"-->
+                                    <!--options="team.key as team.value for team in afgestemdMet"-->
+                    <!--&gt;</am-multiselect>-->
+                </div>
+
+
+                <div class="form-group">
+                    <label for="opdrachtgever">Hoofdfinancier</label>
+
+                    <div class="tooltip_100">
+                        <div tooltips
+                             tooltip-template="Degene die het meest financiert.">
+
+                            <select ng-model="newModel.opdrachtgever"
+                                    chosen
+                                    class="form-control"
+                                    id="opdrachtgever"
+                                    ng-options="option.key as option.value for option in opdrachtgevers"
+                                    required>
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <!--<input type="text" class="form-control"-->
+                           <!--id="opdrachtgever"-->
+                           <!--placeholder="provincie, gemeenten, KpVV, FCK, CROW"-->
+                           <!--ng-model="newModel.opdrachtgever"-->
+                           <!--required>-->
+                </div>
+
+                <div class="form-group">
+                    <label for="projecttype">Projecttype</label>
+                    <select ng-model="newModel.projecttype"
+                            class="form-control"
+                            id="projecttype"
+                            required>
+
+                        <option value="kennisontwikkeling"
+                                title="ontwikkeling van kennis gefinancierd door derden en/of CROW">
+                            kennisontwikkeling
+                        </option>
+
+                        <option value="kennisexploitatie"
+                                title="voor cursussen en opleidingen, kennismodules, print etc.">
+                            kennisexploitatie
+                        </option>
+
+                        <!--<option value="combinatie"-->
+                                <!--title="van kennisontwikkeling en kennisexploitatie">-->
+                            <!--combinatie-->
+                        <!--</option>-->
+
+                        <option value="intern"
+                                ng-if="userInfo.roleName === 'Administrator' || isProjectControl"
+                                title="interne projecten CROW, zoals voor ICT en Kennisverspreiding, gefinancierd door het afdelingsbudget. Niet voor de kennisteams.">
+                            intern
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="form-group" ng-if="newModel.projecttype === 'intern'">
+                    <label for="opdrachtgever">Projectgroep</label>
+
+                    <div class="tooltip_100">
+                        <div tooltips
+                             tooltip-template="Degene die het meest financiert.">
+
+                            <select ng-model="newModel.projectgroep"
+                                    chosen
+                                    class="form-control"
+                                    id="projectgroep"
+                                    ng-options="option.key as option.value for option in projectGroups"
+                                    required>
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="financiering">Financiering</label>
+
+                    <div class="tooltip_100">
+                        <div tooltips
+                             tooltip-template="heb je financiering voor het gehele project of heb je per fase financiering.">
+                            <select ng-model="newModel.financiering"
+                                    class="form-control"
+                                    id="financiering">
+                                <option value="project">Project</option>
+                                <option value="fase">Fase</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="achtergrond">Achtergrond / aanleiding</label>
+                    <md-input-container class="md-block">
+                            <textarea ng-model="newModel.achtergrond"
+                                      mb-autosize
+                                      md-select-on-focus
+                                      id="achtergrond"
+                                      aria-label="Achtergrond / aanleiding"></textarea>
+                    </md-input-container>
+                </div>
+
+                <div class="form-group">
+                    <label for="probleemstelling">Probleemstelling</label>
+                    <md-input-container class="md-block">
+                            <textarea ng-model="newModel.probleemstelling"
+                                      mb-autosize
+                                      md-select-on-focus
+                                      id="probleemstelling"
+                                      aria-label="Probleemstelling"></textarea>
+                    </md-input-container>
+                </div>
+
+                <div class="form-group">
+                    <label for="doel">Doel van het project</label>
+                    <md-input-container class="md-block">
+                            <textarea ng-model="newModel.doel"
+                                      mb-autosize
+                                      md-select-on-focus
+                                      id="doel"
+                                      aria-label="Doel van het project"></textarea>
+                    </md-input-container>
+                </div>
+
+                <div class="form-group">
+                    <label for="reference">Referentie</label>
+                    <input type="text" class="form-control"
+                           id="reference"
+                           placeholder="Referentie"
+                           ng-model="newModel.reference">
+                </div>
+
+                <div class="form-group">
+                    <md-checkbox
+                            md-no-ink aria-label="educatie"
+                            ng-model="newModel.educatie"
+                            ng-true-value="true" ng-false-value="false"
+                            class="md-primary">
+                        <strong>Zichtbaar voor team educatie?</strong>
+                    </md-checkbox>
+                </div>
+
+                <div class="form-group">
+                    <md-checkbox
+                            md-no-ink aria-label="kennisverspreiding"
+                            ng-model="newModel.kennisverspreiding"
+                            ng-true-value="true" ng-false-value="false"
+                            class="md-primary">
+                        <strong>Zichtbaar voor team kennisverspreiding?</strong>
+                    </md-checkbox>
+                </div>
+
+                <div class="form-group">
+                    <md-checkbox
+                            ng-change="changeIndirect()"
+                            ng-if="isAdmin || isProjectControl"
+                            md-no-ink aria-label="indirect"
+                            ng-model="newModel.indirect"
+                            ng-true-value="true" ng-false-value="false"
+                            class="md-primary">
+                        <strong>Indirect</strong>
+                    </md-checkbox>
+                </div>
+
+                <div class="form-group" ng-if="newModel.indirect === true">
+                    <label for="opdrachtgever">Uren goedkeuren door</label>
+
+                    <div class="tooltip_100">
+                            <select ng-model="newModel.urengoedkeuren"
+                                    chosen
+                                    class="form-control"
+                                    id="urengoedkeuren "
+                                    ng-options="option.key as option.value for option in urengoedkeuren "
+                                    required>
+                                <option></option>
+                            </select>
+                    </div>
+                </div>
+
+                <div class="row" ng-show="newModel.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ newModel.error }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

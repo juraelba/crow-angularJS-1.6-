@@ -1,0 +1,122 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Profile</small>
+        </h1>
+        <flash-message duration="2000"></flash-message>
+        <div class="row">
+            <div class="container">
+                <div>
+				<div class="col-md-6">
+				<span class="control-label">User Name</span>
+				</div>
+				<div class="col-md-6">
+				<span class="control-label">{{userDetails.UserName}}</span>
+				</div>
+				</div>
+				
+				 <div>
+				<div class="col-md-6">
+				<span class="control-label">Email</span>
+				</div>
+				<div class="col-md-6">
+				<span class="control-label">{{userDetails.Email}}</span>
+				</div>
+				</div>
+				
+				 <div>
+				<div class="col-md-6">
+				<span class="control-label">Phone Number</span>
+				</div>
+				<div class="col-md-6">
+				<span class="control-label">{{userDetails.CountryCode}}{{userDetails.PhoneNumber}}</span>
+				<a ng-show="userDetails.PhoneNumber" role="button" ng-click="showAddUpdateMobileNumberPopup()">Update</a>
+				<a ng-show="!userDetails.PhoneNumber" role="button" ng-click="showAddUpdateMobileNumberPopup()">Add</a>
+				</div>
+				</div>
+            </div>
+        </div>
+		
+		<div class="modal modalAddUpdatePhoneNumber modal-sm">
+    <div class="modal-content">
+        <div class="modal-header" style="padding:0px;">
+		   <!-- <h4 class="modal-title">Modal Header</h4> -->
+            <span class="close">×</span>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+			    <div class="row">
+                   <div class="col-md-6">
+				   <span class="control-label">Country</span>
+				   </div>
+				   
+							
+							<div class="col-md-6">
+							<select ng class="form-control"  ng-model="selectedCountry" ng-options="item.country for item in countries track by item.countryCode">
+                                <!-- <option ng-repeat="option in countries" value="{{ option.countryCode }}"> -->
+                                    <!-- {{ option.country }} -->
+                                <!-- </option> -->
+                            </select>
+				   </div>
+                </div>
+				
+				 <div class="row">
+                   <div class="col-md-6">
+				   <span class="control-label">Phone Number</span>
+				   </div>
+				   
+							
+							<div class="col-md-6">
+							<input class="form-control" type="text" placeholder="Phone Number" ng-model="phoneNumber">
+				   </div>
+                </div>
+				</br>
+				<div class="row">
+                   <div class="col-md-12">
+				    <button class="btn btn-default btn-block btn-flat" ng-click="addUpdateMobileNumber()">Add/Update Phone Number</button>
+				   </div>
+                </div>
+				</br>
+				 <div class="row" ng-show="errorMessage">
+                    <div class="col-md-12 col-xs-12 alert alert-danger text-center clsError">
+                        {{ errorMessage }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modalOTP modal-sm">
+    <div class="modal-content">
+        <div class="modal-header" style="padding:0px;">
+		   <!-- <h4 class="modal-title">Modal Header</h4> -->
+            <span class="close">×</span>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <span>Voer OTP in ontvangen in uw geregistreerde mobiel.</span>
+			    <div class="form-group has-feedback">
+                    <input type="password" name="otp" ng-model="otp" class="form-control" placeholder="OTP"
+                            required/>
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+				
+                <div class="form-group">
+                    <button class="btn btn-default btn-block btn-flat" ng-click="verifyOtpAndUpdatePhoneNumber()">Add/Update Phone Number</button>
+                </div>
+				 <div class="" ng-show="errorMessage">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ errorMessage }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+           
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>

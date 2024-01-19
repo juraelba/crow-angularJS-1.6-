@@ -1,0 +1,13 @@
+<footer style="margin: 0 0 20px;">
+    <p>
+        <span>© {{ date | date:'yyyy'}} - PID</span>
+        <span class="pull-right">
+            Version {{ env.version }}
+
+            <label class="label"
+                   ng-style="{'background-color': env.color, 'display': 'block'}">
+                {{ env.env }}
+            </label>
+        </span>
+    </p>
+</footer>

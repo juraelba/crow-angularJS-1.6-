@@ -1,0 +1,222 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Dashboard Productiviteit</small>
+        </h1>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-2">
+                    Begindatum
+                    <input ng-model="startDate"
+                           datepicker
+                           type="text"
+                           required
+                           class="form-control"
+                           ng-change="setDate()">
+                </div>
+                <div class="col-lg-2">
+                    Einddatum
+                    <input ng-model="endDate"
+                           datepicker
+                           type="text"
+                           required
+                           class="form-control"
+                           ng-change="setDate()">
+                </div>
+
+                <div ng-if="isAdminRole()" class="col-md-4">
+                    <label>Teams</label>
+                    <br>
+                    <select chosen
+                            ng-model="tempobject.KPITeam"
+                            ng-change="teamSelected()"
+                            class="form-control"
+                            ng-options="option.key as option.value for option in KPITeams">
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label>Medewerkers</label>
+                    <br>
+                    <select chosen
+                            ng-model="tempobject.KPIUser"
+                            ng-change="employeeSelected()"
+                            class="form-control"
+                            ng-options="option.key as option.value for option in KPIUsers">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-counters margin-top-20 margin-bottom-40 dashboard">
+
+                    <div class="row margin-bottom-10">
+
+                        <div class="counters col-md-3 col-sm-3">
+                            <div class="servive-block servive-block-u kpi-block">
+                                <i class="icon-custom icon-color-light rounded-x fa fa-line-chart"></i><br>
+                                <span class="counter">{{ kpi[0].Productiviteit }}</span>
+                                <h4>Productiviteit</h4>
+                            </div>
+                        </div>
+
+                        <!--<a data-toggle="modal"-->
+                        <!--ng-click="showDetails(item)"-->
+                        <!--data-target=".intake_ris_list"-->
+                        <!--href-->
+                        <!--ng-repeat="item in kpi">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-u"-->
+                        <!--style="background-color: #367fa9"-->
+                        <!--ng-repeat="(key, value) in item.kpiFunctieMain">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-thumbs-o-up"></i><br>-->
+                        <!--<span class="counter">{{ value }}</span>-->
+                        <!--<h4>{{ key }}</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                        <!--<a data-toggle="modal" data-name="verkoop euro" data-target=".approved_ris_day_sales_list"-->
+                        <!--href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-blue" style="background-color: #E74C3C">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-calendar"></i><br>-->
+                        <!--<span>€</span><span class="counter">0,00</span>-->
+                        <!--<h4>Verkoop €</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                        <!--<a data-toggle="modal" data-target=".daily_turn_over_list" href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-purple" style="background-color: #E74C3C">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-money"></i><br>-->
+                        <!--<span class="">€</span><span class="counter">0,00</span>-->
+                        <!--<h4>Omzet €</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+
+                        <!--<a href="javascript:;">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-purple" style="background-color: #E74C3C">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-money"></i><br>-->
+                        <!--<span class="">€</span>-->
+                        <!--<span class="counter">-->
+                        <!--0,00-->
+                        <!--</span>-->
+                        <!--<h4>Gemiddeld</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                        <!--</div>-->
+
+                        <!--<div class="row margin-bottom-10">-->
+
+                        <!--<a data-toggle="modal" data-target=".kpi_ris_list" href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-dark">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-thumbs-o-up"></i><br>-->
+                        <!--<span class="counter">0</span>-->
+                        <!--<h4>Garantie</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                        <!--<a data-toggle="modal" data-target=".approved_ris_sales_list" href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-dark">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-calendar"></i><br>-->
+                        <!--<span></span><span class="counter">0</span>-->
+                        <!--<h4>Verkoop #</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+
+                        <!--<a data-toggle="modal" data-target=".rejected_ris_list" href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-dark">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-times"></i><br>-->
+                        <!--<span class="counter">0</span>-->
+                        <!--<h4>Afgekeurd</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                        <!--<a data-toggle="modal" data-target=".approved_ris_invoice_list" href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-dark">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-star"></i><br>-->
+                        <!--<span class="counter">-->
+                        <!--0-->
+                        <!--</span>-->
+                        <!--<h4>Afgerond #</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                        <!--</div>-->
+
+                        <!--<div class="row margin-bottom-10">-->
+
+                        <!--<a data-toggle="modal" data-target=".invoiced_list" href="">-->
+                        <!--<div class="counters col-md-3 col-sm-3">-->
+                        <!--<div class="servive-block servive-block-dark" style="">-->
+                        <!--<i class="icon-custom icon-color-light rounded-x fa fa-money"></i><br>-->
+                        <!--<span>€</span><span class="counter">0,00</span>-->
+                        <!--<h4>Gefactureerd</h4>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</a>-->
+
+                    </div>
+
+                    <!--<div class="row">-->
+                        <!--<div class="container">-->
+                            <!--<table ng-table-dynamic="urenTableParams with urenTableCols" show-filter="false" class="table table-bordered table-striped tableUp">-->
+                                <!--<tr ng-repeat="row in $data"  style="cursor: pointer">-->
+                                    <!--<td ng-repeat="col in $columns">{{::row[col.field]}}</td>-->
+                                <!--</tr>-->
+                            <!--</table>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <div class="margin-bottom-50">
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <table ng-table-dynamic="data.table with data.tableCols" show-filter="false"
+                   class="table table-bordered table-striped" style="font-size: 12px">
+                <tr ng-repeat="row in $data">
+                    <td ng-repeat="col in $columns">
+                        {{::row[col.field]}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

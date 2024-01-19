@@ -1,0 +1,37 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Datawarehouse</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="container">
+                <div class="col-md-4">
+                    <a href class="btn btn-success" ng-click="getDWHSync()">Ververs datawarehouse</a>
+                </div>
+                <div class="col-md-4">
+                    <a href class="btn btn-success" ng-click="getApprovedProjectsUnit()">Upload projecten</a>
+                </div>
+                <div class="col-md-4">
+                    <a href class="btn btn-success" ng-click="getApprovedProjectBudgetsUnit()">Upload project budgetten</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            Done
+        </div>
+    </div>
+</div>

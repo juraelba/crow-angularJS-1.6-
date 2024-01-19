@@ -1,0 +1,375 @@
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1035; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%; /* Could be more or less, depending on screen size */
+}
+
+.bigModal {
+    width: 90% !important;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 102; /* Sit on top */
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.loader {
+    display: none;
+    position: fixed;
+    z-index: 1040;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8) url('../img/loader.gif') 50% 50% no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .loader {
+    display: block;
+}
+
+.animate-show-hide.ng-hide {
+    opacity: 0;
+}
+
+.animate-show-hide.ng-hide-add,
+.animate-show-hide.ng-hide-remove {
+    transition: all linear 0.5s;
+}
+
+.ng-table th {
+    text-align: left;
+}
+
+.pullRight {
+    text-align: right !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid #fff !important;
+}
+
+.dashboard h4, .dashboard span {
+    color: #fff;
+}
+
+.navbar-pid {
+    background-color: #fff;
+    border-color: #009DE0;
+    border-width: 0 1px 4px 1px;
+}
+
+.detailsRow {
+    padding: 20px 0 20px 0;
+    font-size: 21px;
+}
+
+.detailsLabel {
+    font-weight: 100 !important;
+}
+
+a.btn-success {
+    margin-bottom: 15px;
+}
+
+.versionInput {
+    width: 50px !important;
+}
+
+.detailsDate {
+    font-size: 14px;
+    padding-top: 8px;
+}
+
+.created {
+    padding-left: 110px;
+}
+
+.md-datepicker-calendar-pane {
+    z-index: 1037 !important;
+}
+
+.inputTable {
+    height: 18px;
+    font-size: 13px;
+}
+
+.aDisabled {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none !important;
+    color: #555555;
+}
+
+.fixedTh {
+    width: 150px;
+}
+
+.middleTh {
+    vertical-align: middle !important;
+}
+
+.contentNoPadding {
+    padding: 0 !important;
+}
+
+.contentPaddingTop105 {
+    padding-top: 105px !important;
+}
+
+.borderedDiv {
+    outline: 1px solid #EEEEEE;
+}
+
+.tableUp {
+    margin-top: -20px;
+}
+
+.hideWeek {
+    margin-bottom: 30px !important;
+}
+
+.checkboxAll {
+    position: absolute;
+    top: 8px;
+    left: 24px;
+    display: none;
+}
+
+.chosen-container {
+    width: 100% !important;
+}
+
+.hour-1 a, .hour-2 a, .hour-3 a, .hour-4 a {
+    color: white !important;
+}
+
+.hour-1 {
+    background-color: blue !important;
+}
+
+.hour-2 {
+    background-color: Red !important;
+}
+
+.hour-3 {
+    background-color: Orange !important;
+}
+
+.hour-4 {
+    background-color: Green !important;
+}
+
+.hour-5 {
+    background-color: Green !important;
+    color: white;
+}
+
+.hour-4 a, .hour-5 a{
+    color: white;
+}
+
+.spanColor {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.spanBlue {
+    background-color: blue;
+}
+
+.spanRed {
+    background-color: red;
+}
+
+.spanOrange {
+    background-color: orange;
+}
+
+.spanGreen {
+    background-color: green;
+    color: white;
+}
+
+.leftIcon {
+    cursor: pointer;
+    padding: 8px;
+}
+
+.rightIcon {
+    cursor: pointer;
+    padding-top: 8px;
+}
+
+.localytics-chosen {
+    display: block !important;
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    height: 29px;
+}
+
+.tableUp td span {
+    color: #ffffff;
+}
+
+.chosen-container .chosen-results li.redFocus {
+    background-color: red !important;
+    background-image: linear-gradient(#FE2E2E 20%, red 90%);
+    color: #fff;
+}
+
+.chosen-container .chosen-results li.blueFocus {
+    background-color: blue !important;
+    background-image: linear-gradient(#0000FF 20%, blue 90%);
+    color: #fff;
+}
+
+.chosen-container .chosen-results li.orangeFocus {
+    background-color: orange !important;
+    background-image: linear-gradient(#B18904 20%, orange 90%);
+    color: #fff;
+}
+
+.chosen-container .chosen-results li.greenFocus {
+    background-color: green !important;
+    background-image: linear-gradient(#088A08 20%, green 90%);
+    color: #fff;
+}
+
+.img-logo {
+    height: 25px;
+}
+
+.table-scroll thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-scroll tbody::-webkit-scrollbar {
+    /*display: none;*/
+}
+
+.table-scroll tbody {
+    max-height: 400px;
+    overflow: scroll;
+    display: block;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-scroll tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table-scroll td {
+    height: 47px;
+}
+
+.md-icon-float label {
+    font-size: 10px !important;
+}
+
+.hoursChosen a.chosen-single {
+    background: none;
+    color: #444;
+    border: none;
+    height: 36px;
+}
+
+.hoursChosen a.chosen-single div {
+    top: 6px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.table-into-modal thead tr th, tbody tr td {
+    word-wrap: break-word;
+}
+
+.table-into-modal {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/** Editable table
+------------------------- */
+
+.editable-table > tbody > tr > td {
+    padding: 4px
+}
+
+.editable-text {
+    padding-left: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    display: inline-block;
+}
+
+.editable-table tbody > tr > td > .controls {
+    /* width: 100 % */
+}
+
+.editable-input {
+    padding-left: 3px;
+}
+
+.editable-input.input-sm {
+    height: 30px;
+    font-size: 14px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.bg-warning {
+    background-color: #fcf8e3 !important;
+}
+.chosen-container{
+    padding-right:10px
+}
+.chosen-container-single{
+    padding-top:6px
+}

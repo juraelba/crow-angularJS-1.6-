@@ -1,0 +1,68 @@
+﻿<div class="page-header">
+    <h2>Inloggen.</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <section id="loginForm">
+                <form ng-submit="login()">
+                    <div class="form-group has-feedback">
+                        <input type="text" name="userName" ng-model="userName" class="form-control" placeholder="Login"
+                               required/>
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <input type="password" name="password" ng-model="password" class="form-control"
+                               placeholder="Wachtwoord" required/>
+                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <button class="btn btn-default btn-block btn-flat" type="submit">Inloggen</button>
+                        </div>
+                    </div>
+					<div class="row">
+                        <div class="col-xs-4">
+                            <a href="/#!/password-reset-email">Forgot Password</a>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row" ng-show="messsageError">
+                        <div class="col-xs-12 alert alert-danger text-center clsError">
+                            {{ messsageError }}
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div class="col-md-8">
+        </div>
+    </div>
+    <div class="modal modalOTP modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:0px;">
+                <h4 class="modal-title">Modal Header</h4>
+                <span class="close">×</span>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <span>Voer OTP in ontvangen in uw geregistreerde mobiel.</span>
+                    <div class="form-group has-feedback">
+                        <input type="password" name="otp" ng-model="otp" class="form-control" placeholder="OTP"
+                               required/>
+                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-default btn-block btn-flat" ng-click="login()">Inloggen</button>
+                    </div>
+                    <div class="" ng-show="otpError">
+                        <div class="col-xs-12 alert alert-danger text-center clsError">
+                            {{ otpError }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-include src="'templates/footer.html'">
+</div>

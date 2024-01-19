@@ -1,0 +1,124 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Uren goedkeuren</small>
+        </h1>
+        <div class="row">
+            <div class="container">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="employee">Medewerker</label>
+                        <select chosen
+                                ng-model="employee"
+                                id="employee"
+                                data-placeholder-text-single="'Kies een medewerker'"
+                                class="form-control"
+                                ng-options="option.key as option.value for option in filter.employees">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Project">Project</label>
+                        <select chosen
+                                ng-model="project"
+                                data-placeholder-text-single="'Kies een project'"
+                                class="form-control"
+                                id="Project"
+                                ng-options="option.key as option.value for option in filter.projects">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="activity">Activiteit</label>
+                        <select chosen
+                                ng-model="activity"
+                                data-placeholder-text-single="'Kies een activiteit'"
+                                class="form-control"
+                                id="activity"
+                                ng-options="option.key as option.value for option in filter.activities">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <flash-message duration="2000"></flash-message>
+            <div class="container">
+                <div class="col-lg-2">
+                    <a href class="btn btn-success" ng-click="approve()">Goedkeuren</a>
+                </div>
+                <div class="col-lg-2">
+                    <a href class="btn btn-danger" ng-click="showAdditional()">Afkeuren</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-12">
+                    <md-checkbox
+                            ng-show="data.length > 0"
+                            aria-label="0"
+                            md-no-ink
+                            ng-model="checkboxAll['value']"
+                            class="md-primary checkboxAll">
+                    </md-checkbox>
+                    <table ng-table-dynamic="tableParams with cols" show-filter="false"
+                           class="table table-bordered table-striped approve" style="font-size: 12px">
+                        <tr ng-repeat="row in $data">
+                            <td ng-if="row.hourid">
+                                <md-checkbox
+                                        aria-label="{{ row.hourid }}"
+                                        md-no-ink
+                                        ng-click="toggleId(row.hourid)"
+                                        ng-model="checkbox[row.hourid]"
+                                        ng-true-value="1" ng-false-value="0"
+                                        class="md-primary">
+                                </md-checkbox>
+                            </td>
+                            <td ng-repeat="col in $columns">
+                                {{::row[col.field]}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="negative()">
+
+                <div class="form-group">
+                    <label for="reden">Reden afkeuren</label>
+                    <md-input-container class="md-block">
+                            <textarea ng-model="reden"
+                                      mb-autosize
+                                      md-select-on-focus
+                                      id="reden"
+                                      aria-label="Reden afkeuren"
+                                      required
+                            ></textarea>
+                    </md-input-container>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

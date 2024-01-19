@@ -1,0 +1,382 @@
+<div class="page-header">
+
+    <div class="col-md-9">
+        <section class="content-header">
+            <h1>
+                <small>Uren invoeren</small>
+            </h1>
+
+            <div class="col-md-12" style="padding-right: 0!important">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <md-checkbox
+                                md-no-ink aria-label="Toon weken niet volledig ingediend"
+                                ng-model="hideWeek"
+                                ng-true-value="1" ng-false-value="0"
+                                class="md-primary">
+                            Toon weken niet volledig ingediend
+                        </md-checkbox>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="employee">Medewerker</label>
+                        <select ng-if="rootUser.roleName ==='Administrator'"
+                                id="users"
+                                class="form-control"
+                                ng-model="currentUser.userName"
+                                ng-change="changeUser(currentUser.userName)"
+                                ng-disabled="rootUser.roleName !== 'Administrator'"
+                                ng-options="option.UserName as option.Email for option in users">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 borderedDiv" style="padding-right: 0!important">
+                    <span class="spanColor spanBlue"></span> - Opgeslagen<br>
+                    <span class="spanColor spanRed"></span> - Afgekeurd<br>
+                    <span class="spanColor spanOrange"></span> - Ingediend<br>
+                    <span class="spanColor spanGreen"></span> - Goedgekeurd
+                </div>
+            </div>
+            <div class="col-md-12">
+                <table ng-show="hideWeek"
+                       ng-table-dynamic="missedWeeksTable with missedWeeksCols" show-filter="false"
+                       class="table table-bordered table-striped tableUp hideWeek" style="font-size: 12px">
+                    <tr ng-repeat="row in $data">
+                        <td ng-repeat="col in $columns" ng-click="selectWeek(row['Week'])">
+                            {{::row[col.field]}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="content contentPaddingTop105">
+            <flash-message duration="2000"></flash-message>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered tableUp">
+                        <tr>
+                            <th rowspan="2" class="middleTh">{{ getNumberOfWeek(currentWeek[0].date) }}
+                            </th>
+                            <th ng-repeat="day in currentWeek" ng-click="setDate(day.date)">{{ day.date }}</th>
+                            <!--<th class="fixedTh"></th>-->
+                        </tr>
+                        <td ng-repeat="day in currentWeek"
+                            class="hour-{{ day.minStatus == 5 && day.value == 0 ? 6 : day.status }}">
+                            <a href
+                                ng-class="{'aDisabled': !day.value}"
+                                ng-click="showDetails(day.date, true)"
+                            >{{ day.value }}</a>
+                        </td>
+                        <td ng-if="checkStatus(currentWeek)">
+                            <a href class="btn btn-info" ng-click="submitDates(currentWeek)">Indienen</a>
+                        </td>
+                        <!--<td ng-if="!checkStatus(currentWeek)"-->
+                        <!--class="hour-{{ weekStatuses['currentWeek'] }}">-->
+                        <!--<span>{{ statusesWeek[weekStatuses['currentWeek']] }}</span>-->
+                        <!--</td>-->
+                        </tr>
+                    </table>
+                    <table class="table table-bordered tableUp">
+                        <tr>
+                            <th rowspan="2" class="middleTh">{{ getNumberOfWeek(lastWeek[0].date) }}</th>
+                            <th ng-repeat="day in lastWeek" ng-click="setDate(day.date)">{{ day.date }}</th>
+                            <!--<th class="fixedTh"></th>-->
+                        </tr>
+                        <tr>
+                            <td ng-repeat="day in lastWeek"
+                                class="hour-{{ day.minStatus == 5 && day.value == 0 ? 6 : day.status }}">
+                                <a href
+                                    ng-class="{'aDisabled': !day.value}"
+                                    ng-click="showDetails(day.date, true)"
+                                >{{ day.value }}</a>
+                            </td>
+                            <td ng-if="checkStatus(lastWeek)">
+                                <a href class="btn btn-info" ng-click="submitDates(lastWeek)">Indienen</a>
+                            </td>
+                            <!--<td ng-if="!checkStatus(lastWeek)"-->
+                            <!--class="hour-{{ weekStatuses['lastWeek'] }}">-->
+                            <!--<span>{{ statusesWeek[weekStatuses['lastWeek']] }}</span>-->
+                            <!--</td>-->
+                        </tr>
+                    </table>
+                    <table class="table table-bordered tableUp">
+                        <tr>
+                            <th rowspan="2" class="middleTh">{{ getNumberOfWeek(secondLastWeek[0].date)
+                                }}
+                            </th>
+                            <th ng-repeat="day in secondLastWeek" ng-click="setDate(day.date)">{{ day.date }}</th>
+                            <!--<th class="fixedTh"></th>-->
+                        </tr>
+                        <tr>
+                            <td ng-repeat="day in secondLastWeek"
+                                class="hour-{{ day.minStatus == 5 && day.value == 0 ? 6 : day.status }}">
+                                <a href
+                                    ng-class="{'aDisabled': !day.value}"
+                                    ng-click="showDetails(day.date, true)"
+                                >{{ day.value }}</a>
+                            </td>
+                            <td ng-if="checkStatus(secondLastWeek)">
+                                <a href class="btn btn-info" ng-click="submitDates(secondLastWeek)">Indienen</a>
+                            </td>
+                            <!--<td ng-if="!checkStatus(secondLastWeek)"-->
+                            <!--class="hour-{{ weekStatuses['secondLastWeek'] }}">-->
+                            <!--<span>{{ statusesWeek[weekStatuses['secondLastWeek']] }}</span>-->
+                            <!--</td>-->
+                        </tr>
+                    </table>
+                    <table class="table table-bordered tableUp">
+                        <tr>
+                            <th rowspan="2" class="middleTh">{{ getNumberOfWeek(thirdLastWeek[0].date)
+                                }}
+                            </th>
+                            <th ng-repeat="day in thirdLastWeek" ng-click="setDate(day.date)">{{ day.date }}</th>
+                            <!--<th class="fixedTh"></th>-->
+                        </tr>
+                        <tr>
+                            <td ng-repeat="day in thirdLastWeek"
+                                class="hour-{{ day.minStatus == 5 && day.value == 0 ? 6 : day.status }}">
+                                <a href
+                                    ng-class="{'aDisabled': !day.value}"
+                                    ng-click="showDetails(day.date, true)"
+                                >{{ day.value }}</a>
+                            </td>
+                            <td ng-if="checkStatus(thirdLastWeek)">
+                                <a href class="btn btn-info" ng-click="submitDates(thirdLastWeek)">Indienen</a>
+                            </td>
+                            <!--<td ng-if="!checkStatus(thirdLastWeek)"-->
+                            <!--class="hour-{{ weekStatuses['thirdLastWeek'] }}">-->
+                            <!--<span>{{ statusesWeek[weekStatuses['thirdLastWeek']] }}</span>-->
+                            <!--</td>-->
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+        </section>
+
+    </div>
+    <div class="col-md-3" style="padding-top: 65px; padding-left: 30px;">
+        <form ng-submit="formSubmit()">
+            <div class="row">
+                <div>
+                    <div class="form-group">
+                        <label for="date">Datum</label>
+                        <!--<md-content>-->
+                            <!--<md-datepicker ng-model="date"-->
+                                            <!--id="date"-->
+                                            <!--md-placeholder=""-->
+                                            <!--ng-required="true"-->
+                                            <!--ng-change="setCurrentDate()">-->
+                            <!--</md-datepicker>-->
+                        <!--</md-content>-->
+
+                        <input ng-model="date"
+                                datepicker
+                                type="text"
+                                id="date"
+                                required
+                                class="form-control"
+                                ng-change="setCurrentDate()">
+
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group hoursChosen" ng-click="setColor()">
+                        <label for="Project">Project</label>
+                        <select chosen
+                                ng-model="project"
+                                data-placeholder-text-single="'Kies een project'"
+                                class="form-control chosen-projects"
+                                id="Project"
+                                ng-options="option as option.value for option in projects"
+                                required>
+                            <option></option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 hidden">
+                        <div class="form-group">
+                            <label for="fase">Fase</label>
+                            <select ng-model="fase"
+                                    data-placeholder-text-single="'Kies een fase'"
+                                    class="form-control"
+                                    id="fase"
+                                    ng-options="option.key as option.value for option in fases"
+                                    ng-disabled="fases.length == 0">
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 hidden">
+                        <div class="form-group">
+                            <label for="roll">Rol</label>
+                            <select ng-model="roll"
+                                    data-placeholder-text-single="'Kies een rol'"
+                                    class="form-control"
+                                    id="roll"
+                                    ng-options="option.key as option.value for option in rolls"
+                                    ng-disabled="rolls.length == 0">
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="selectedProject['ProjectType'] !=='Direct'">
+                    <div class="form-group">
+                        <label for="activity">Activiteit</label>
+                        <select ng-model="activity"
+                                data-placeholder-text-single="'Kies een activiteit'"
+                                class="form-control"
+                                id="activity"
+                                style="width: 100%;"
+                                ng-options="option.key as option.value for option in activities"
+                                required>
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label for="hours">Aantal uren</label>
+                        <input type="number"
+                                ng-model="hours"
+                                id="hours"
+                                required
+                                ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                                step="0.01"
+                                min="0.01"
+                                max="{{ userInfo.restriction === 0 ? 1000 : 8 }}"
+                                class="form-control">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="note">Opmerking</label>
+                        <input type="text"
+                                ng-model="note"
+                                id="note"
+                                required
+                                class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="row" ng-show="error">
+                        <div class="col-xs-12 alert alert-danger text-center clsError">
+                            {{ error }}
+                        </div>
+                    </div>
+                    <div class="row" ng-show="success">
+                        <div class="col-xs-12 alert alert-success text-center">
+                            {{ success }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-5">
+                        <!--<a href class="btn btn-success pull-left" ng-click="newHour()">Nieuwe uren schrijven</a>-->
+                        <button class="btn btn-success">{{ id ? 'Wijzigen':
+                            'Bewaren' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row"></div>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+
+<div class="modal modalAdditional">
+    <div class="modal-content bigModal">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <table ng-table-dynamic="tableParams with cols" show-filter="false"
+                   class="table table-bordered table-striped table-into-modal"
+                   style="font-size: 12px;table-layout:fixed;display:inline-block">
+                <tr ng-repeat="row in $data">
+                    <td ng-repeat="col in $columns" ng-style="{'width': widthDetailsTable[col.field] + '%'}">
+                        <div ng-if="detailsEdit[row.id]">
+                            <div ng-show="detailsEdit[row.id]">
+                                <div class="hoursChosen"
+                                     style="width: 100%; max-width: 300px; min-width: 200px"
+                                     ng-click="setColor()"
+                                     ng-if="col.field == 'Project'">
+                                    <select chosen
+                                            ng-model="selectItem.projectHash"
+                                            ng-change="changeCurrentProjectByHash()"
+                                            data-placeholder-text-single="'Kies een project'"
+                                            class="form-control chosen-projects"
+                                            ng-options="option.hash as option.value for option in projects"
+                                            required>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div
+                                     ng-if="col.field == 'Activiteit' && selectItem.project['ProjectType']!=='Direct'">
+                                    <select ng-model="selectItem.Activiteit"
+                                            data-placeholder-text-single="'Kies een activiteit'"
+                                            class="form-control"
+                                            ng-options="option.key as option.value for option in activities"
+                                            required>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div
+                                     ng-if="col.field == 'Aantal uren'">
+                                    <input type="number"
+                                           ng-model="selectItem['Aantal uren']"
+                                           required
+                                           ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                                           step="0.01"
+                                           min="0.01"
+                                           max="{{ userInfo.restriction === 0 ? 1000 : 8 }}"
+                                           class="form-control">
+                                </div>
+                                <div
+                                     ng-if="col.field == 'Opmerking'">
+                                    <input type="text"
+                                           ng-model="selectItem.Opmerking"
+                                           required
+                                           class="form-control">
+                                </div>
+
+                                <span ng-if="['Medewerker', 'Status', 'Rol', 'Fase'].indexOf(col.field)!==-1">
+                                    {{::row[col.field]}}
+                                </span>
+                            </div>
+                        </div>
+                        <div ng-if="!detailsEdit[row.id]">
+                            {{::row[col.field]}}
+                        </div>
+                    </td>
+                    <td ng-if="row.StatusId==1 || row.StatusId==2" style="width: 5%">
+                        <div ng-show="detailsEdit[row.id]">
+                            <a href
+                               ng-click="saveEditDetail(row)">
+                                <i class="fa fa-save fa-lg"></i>
+                            </a>
+                            <a href ng-click="hideEditDetail(row)">
+                                <i class="fa fa-undo fa-lg"></i>
+                            </a>
+                        </div>
+                        <a href ng-show="!detailsEdit[row.id]" ng-click="editRow(row)">
+                            <i class="fa fa-pencil fa-lg"></i>
+                        </a>
+                    </td>
+                    <td ng-if="row.StatusId==1 || row.StatusId==2" style="width: 5%"
+                        ng-click="deleteRow(row.id)">
+                        <i class="fa fa-trash-o fa-lg"></i>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Projecten</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-8">
+                    <a href ng-click="showProjectForm()" class="btn btn-success">Maak nieuw projeasdasdasdct aan</a>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" placeholder="Zoeken naar..." ng-model="search"/>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="container">
+                <table ng-table-dynamic="tableParams with cols" show-filter="false" class="table table-bordered table-striped">
+                    <tr ng-repeat="row in $data | filter:search" ng-click="go('/project/'+row.versieid)" style="cursor: pointer">
+                        <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalWindow">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="addProject()">
+                <form-create form="projectForm" model="newProject"></form-create>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="addAfgestemdMet()">
+                <div class="form-group">
+                    <label for="AfgestemdMet">Afgestemd met</label>
+                    <am-multiselect multiple="true" ms-selected="There are {{ newProject.afgestemdMet.length }} Afgestemd met(s) selected"
+                                    id="AfgestemdMet"
+                                    ng-model="newProject.afgestemdMet" ms-header="Select Afgestemd met"
+                                    template-url="templates/multiselect.tmpl.html"
+                                    options="team.key as team.value for team in projectTeams"
+                    ></am-multiselect>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

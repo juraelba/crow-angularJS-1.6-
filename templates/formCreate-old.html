@@ -1,0 +1,23 @@
+<div class="form-group" ng-repeat="form in formCreate">
+    <label for="{{ form.Veldlabel }}" ng-if="form.Veldlabel!='Afgestemd met'">{{ form.Veldlabel }}</label>
+    <input ng-if="form.Veldtype!='singleselect' && form.Veldtype!='multiselect' && form.Visible" type="{{ form.Veldtype=='int'?'number':'text' }}" class="form-control"
+           id="{{ form.Veldlabel }}"
+           placeholder="{{ form.Veldlabel }}"
+           ng-disabled="form.Readonly"
+           ng-model="model[form.Veldnaam]" >
+    <select ng-if="form.Veldtype=='singleselect' && form.Visible" ng-model="model[form.Veldnaam]"
+            class="form-control"
+            ng-disabled="form.Readonly"
+            id="{{ form.Veldlabel }}"
+            ng-options="option.key as option.value for option in form.options">
+        <option></option>
+    </select>
+</div>
+<div class="row" ng-show="model.error">
+    <div class="col-xs-12 alert alert-danger text-center clsError">
+        {{ model.error }}
+    </div>
+</div>
+<div class="form-group">
+    <button class="btn btn-success center-block">Bewaren</button>
+</div>

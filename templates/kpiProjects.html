@@ -1,0 +1,197 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Dashboard Projecten</small>
+        </h1>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-2">
+                    Start date
+                    <input ng-model="startDate"
+                           datepicker
+                           type="text"
+                           required
+                           class="form-control"
+                           ng-change="setDate()">
+                </div>
+                <div class="col-lg-2">
+                    End date
+                    <input ng-model="endDate"
+                           datepicker
+                           type="text"
+                           required
+                           class="form-control"
+                           ng-change="setDate()">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Teams</label>
+                    <br>
+                    <select chosen
+                            ng-model="team"
+                            ng-change="teamSelected()"
+                            class="form-control"
+                            ng-options="option.key as option.value for option in teams">
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Medewerkers</label>
+                    <br>
+                    <select chosen
+                            ng-model="user"
+                            ng-change="getKPI()"
+                            class="form-control"
+                            ng-options="option.key as option.value for option in users">
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label>Status</label>
+                    <br>
+                    <select chosen
+                            ng-model="status"
+                            ng-change="getKPI()"
+                            class="form-control"
+                            ng-options="option.key as option.value for option in statuses">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-counters margin-top-20 margin-bottom-40 dashboard">
+
+                    <div class="row margin-bottom-10">
+                        <div class="counters col-md-6 col-sm-6">
+                            <h3>Projecten per status</h3>
+                            <br>
+                            <canvas id="chartData"
+                                    class="chart chart-doughnut"
+                                    ng-if="chartData.length"
+                                    chart-options="chartOptions"
+                                    chart-click="chartClick"
+                                    chart-data="chartData"
+                                    chart-labels="chartLabels">
+                            </canvas>
+                            <span ng-if="!chartData.length">No data</span>
+                        </div>
+
+                        <div class="counters col-md-6 col-sm-6">
+                            <h3>Project financiering</h3>
+                            <br>
+                            <canvas id="secondChartData"
+                                    class="chart chart-doughnut"
+                                    ng-if="secondChartData.length"
+                                    chart-click="secondChartClick"
+                                    chart-options="secondChartOptions"
+                                    chart-data="secondChartData"
+                                    chart-labels="secondChartLabels">
+                            </canvas>
+                            <span ng-if="!secondChartData.length">No data</span>
+                        </div>
+                    </div>
+
+                    <div class="margin-bottom-50">
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalAdditional confirmDisabled">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>{{ selectedLabel }}</h3>
+
+                    <br>
+
+                    <table ng-table-dynamic="tableParams with cols"
+                           show-filter="true"
+                           class="table table-bordered table-stripped table-into-modal"
+                           style="font-size: 12px">
+                        <tr ng-repeat="row in $data">
+                            <td ng-repeat="col in $columns"
+                                ng-style="{'cursor':rowClickable?'pointer':'default'}"
+                                ng-click="showAdditionalPopupTable(row, rowMethod)">
+                                    <span>
+                                        {{ getValue(col.field, row) }}
+                                    </span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table style="display:none;" id="table_excel">
+                        <tr>
+                            <th ng-repeat="col in cols">{{ col.field }}</th>
+                        </tr>
+                        <tr ng-repeat="row in popupTableData">
+                            <td ng-repeat="col in cols">{{ getValue(col.field, row) }}</td>
+                        </tr>
+                    </table>
+
+                    <span ng-if="popupTableData.length === 0">
+                        No data
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4" ng-if="popupTableData.length !== 0">
+                    <a download="download.xls" class="btn btn-success"
+                       onclick="return ngTableExcelExport.excel(this, 'table_excel', 'Export');">Export</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modalAdditional2 confirmDisabled">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>{{ selectedLabel2 }}</h3>
+
+                    <br>
+
+                    <table ng-table-dynamic="tableParams2 with cols2"
+                           show-filter="true"
+                           class="table table-bordered table-striped table-into-modal"
+                           ng-style="{'font-size': '12px'}">
+                        <tr ng-repeat="row in $data">
+                            <td ng-repeat="col in $columns"
+                                ng-style="{'background-color': getValue('Color', row), 'color':getValue('Color', row) !== 'white'? 'white' : ''}">
+                                <span>
+                                    {{ getValue(col.field, row) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <span ng-if="popupTableData2.length === 0">
+                        No data
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

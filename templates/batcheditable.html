@@ -1,0 +1,76 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="brn-group pull-right">
+            <button class="btn btn-default" ng-if="batchEditable.isEditing" ng-click="batchEditable.cancelChanges()">
+                <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button class="btn btn-primary" ng-if="!batchEditable.isEditing" ng-click="batchEditable.isEditing = true">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </button>
+            <button class="btn btn-primary" ng-if="batchEditable.isEditing"
+                    ng-disabled="!batchEditable.hasChanges() || batchEditable.tableTracker.$invalid"
+                    ng-click="batchEditable.saveChanges()">
+                <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button class="btn btn-default" ng-click="batchEditable.add()">
+                <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </div>
+        <table ng-table-dynamic="batchEditable.tableParams with batchEditable.cols"
+               class="table table-bordered table-condensed table-hover editable-table" ng-form="batchEditable.tableForm"
+               disable-filter="batchEditable.isAdding" tracked-table="batchEditable.tableTracker">
+            <colgroup>
+                <col width="70%"/>
+                <col width="12%"/>
+                <col width="13%"/>
+                <col width="5%"/>
+            </colgroup>
+            <tr ng-repeat="row in $data" ng-form="rowForm" tracked-table-row="row">
+                <td ng-repeat="col in $columns" ng-class="rowForm[col.field].$dirty ? 'bg-warning' : ''" ng-form="{{col[field+'']}}" tracked-table-cell>
+                    <span ng-if="col.dataType !== 'command' && !batchEditable.isEditing" class="editable-text">{{row[col.field]}}</span>
+                    <div ng-if="col.dataType !== 'command' && batchEditable.isEditing" class="controls" ng-class="rowForm[col.field].$invalid && rowForm[col.field].$dirty ? 'has-error' : ''" ng-switch="col.dataType">
+                        <input ng-switch-default
+                               type="text"
+                               name="{{col.field}}"
+                               ng-model="row[col.field]"
+                               class="editable-input form-control input-sm"
+                               ng-disabled="col.disable"
+                               required />
+                        <input ng-switch-when="number"
+                               type="number"
+                               name="{{col.field}}"
+                               ng-model="row[col.field]"
+                               class="editable-input form-control input-sm"
+                               ng-disabled="col.disable"
+                               required />
+                        <input ng-switch-when="computed"
+                               type="text"
+                               name="{{col.field}}"
+                               class="editable-input form-control input-sm"
+                               ng-disabled="col.disable"
+                               value="{{ batchEditable.getComputed(col, row) }}"
+                               required />
+                        <select ng-switch-when="select"
+                                name="{{col.field}}"
+                                ng-model="row[col.field]"
+                                class="form-control"
+                                ng-disabled="col.disable"
+                                required
+                                ng-options="option.value as option.value for option in col.data">
+                        </select>
+                        <select ng-switch-when="selectChosen"
+                                chosen
+                                name="{{col.field}}"
+                                ng-model="row[col.field]"
+                                class="form-control"
+                                ng-disabled="col.disable"
+                                required
+                                ng-options="option.value as option.value for option in col.data">
+                        </select>
+                      </div>
+                    <button ng-if="col.dataType === 'command'" class="btn btn-danger btn-sm" ng-click="batchEditable.del(row)" ng-disabled="!batchEditable.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

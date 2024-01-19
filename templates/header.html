@@ -1,0 +1,137 @@
+<div class="container">
+    <div class="navbar-header">
+        <a href class="navbar-brand"><img src="/img/CROW-hoofdlogo.png" class="img-logo" alt=""></a>
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar-main">
+
+        <ul class="nav navbar-nav" ng-if="rootUser.userName && rootUser.roleName!=='RegularUser'">
+
+            <li ng-if="canSeeMenuItem('Dashboard')">
+                <a target="_blank" ng-href="{{ dashboardUri }}">Dashboard</a>
+            </li>
+
+            <li ng-repeat="item in menu">
+                <a href ng-click="go('/page/' + item.PageId+'/1')"
+                   ng-if="item.Label == 'Projecten'">
+                    {{ item.Label }}
+                </a>
+            </li>
+
+            <li ng-repeat="item in menu"
+                ng-if="item.Label == 'Taken' && canSeeMenuItem('Taken')">
+                <a href ng-click="go('/tasks')">
+                    {{ item.Label }} <span ng-if="countTasks>0">({{countTasks}})</span>
+                </a>
+            </li>
+            <li class="dropdown"
+                ng-if="canSeeMenuItem('Uren')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href ng-click="$event.preventDefault();"
+                   id="Uren">Uren<span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="Uren">
+                    <li ng-if="rootUser.roleName==='Administrator'">
+                        <a  href ng-click="go('/all-hours')">
+                            Afkeuren uren
+                        </a>
+                    </li>
+                    <li ng-if="canSeeMenuItem('Uren invoeren')">
+                        <a href ng-click="go('/hours')">Uren invoeren</a>
+                    </li>
+                    <li ng-if="canSeeMenuItem('Uren goedkeuren')">
+                        <a href ng-click="go('/approve')">Uren goedkeuren</a>
+                    </li>
+                </ul>
+            </li>
+            <li ng-repeat="item in menu" class="dropdown"
+                ng-if="item.Label == 'Beheer' && canSeeMenuItem('Beheer')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href ng-click="$event.preventDefault();"
+                   id="{{ item.Label }}">{{ item.Label }} <span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="{{ item.Label }}">
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/users')">Gebruikers</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/roll')">Rollen</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/purchase')">Inkoop</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/exploitation')">Exploitatie</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/cover')">Dekking</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/employees')">Medewerkers</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/activities')">Activiteiten</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/zeno')"> Zeno</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/audit')"> Audit</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/consistency')"> Consistentie controle</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/instellingen')"> Instellingen</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('Tags')" ng-click="go('/tags')"> Tags</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator'])" ng-click="go('/tag-groups')"> Tag groups</a>
+                    </li>
+                    <li>
+                        <a href ng-if="canSeeMenuItem('', ['Administrator', 'Project control'])" ng-click="go('/documents')"> Documenten</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right" ng-if="rootUser.userName">
+            <li class="dropdown dropdown-user">
+                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                   data-close-others="true" aria-expanded="true">
+                    <span class="username username-hide-on-mobile"> {{rootUser.userName}} </span>
+                    <i class="fa fa-angle-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-default">
+                    <li class="li-like-a">
+                        <i class="icon-user"></i> Rol: {{ rootUser.roleName }}
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href ng-click="go('/profile')">
+                            <i class="icon-user"></i> Profile</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href ng-click="go('/password-change')">
+                            <i class="icon-key"></i> Change password </a>
+                    </li>
+                    <li class="divider"></li>
+
+                    <li>
+                        <a href ng-click="logout()">
+                            <i class="icon-key"></i> Uitloggen </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right" ng-if="!rootUser.userName">
+            <li><a href ng-click="go('/login')">Log in</a></li>
+        </ul>
+
+    </div>
+</div>
+

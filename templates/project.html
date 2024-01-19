@@ -1,0 +1,184 @@
+<header class="main-header" ng-include src="'templates/header.html'">
+</header>
+<aside class="main-sidebar" ng-include src="'templates/menu.html'">
+</aside>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            <small>Project</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-8" style="border-right: 3px solid gray">
+                <div>
+                    <h2>Project</h2>
+                    <div class="row" style="padding: 20px">
+                        <div class="col-lg-2">
+                            <label for="Versie">Versie</label>
+                        </div>
+                        <div class="col-lg-4">
+                            <i class="fa fa-chevron-left" aria-hidden="true" style="cursor: pointer" ng-if="checkVersion('left');" ng-click="changeVersion('left')"></i>
+                            <input type="text" ng-model="versionId" disabled>
+                            <i class="fa fa-chevron-right" aria-hidden="true" style="cursor: pointer" ng-if="checkVersion('right');" ng-click="changeVersion('right')"></i>
+                        </div>
+                        <div class="col-lg-3">
+                            <a href ng-click="createNewVersion()" class="btn btn-info" id="Versie">Nieuwe versie</a>
+                        </div>
+                    </div>
+                    <form ng-submit="updateProject()">
+                        <form-update form="projectForm" model="project" button="true"></form-update>
+                    </form>
+                </div>
+                <div>
+                    <h2>Details</h2>
+                    <tabs tab="projectTabs" fase="faseForm" callback-fn="changeFase(fase)" key="0" name="'parent'" update-fn="updateAdditional(form, query)"></tabs>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h2>Status - {{ project.Status }}</h2>
+                            <div class="row">
+                                <div class="col-lg-12" ng-repeat="projectStatus in projectStatuses" style="padding-bottom: 20px">
+                                    <button class="btn btn-basic btn-block">{{ projectStatus.Label }}</button>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-top: 10px">
+                                <div class="col-lg-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th ng-repeat="(key, projectApprover) in projectApprovers[0]" ng-if="key!='Color'">
+                                                {{ key }}
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="projectApprover in projectApprovers" style="background-color:{{ projectApprover.Color }}">
+                                            <td>
+                                                {{ projectApprover['Goedkeurder'] }}<br>
+                                            </td>
+                                            <td>
+                                                {{ projectApprover['Status'] }}<br>
+                                            </td>
+                                            <td>
+                                                {{ projectApprover['Goedgekeurd op'] }}<br>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h2>Communicatie</h2>
+                            <div class="row">
+                                <form ng-submit="addCommunicate()">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <textarea ng-model="project.beschrijving" class="form-control" rows="3" placeholder="Nieuwe notitie" required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-info pull-right">Aanmaken</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row" style="padding-top: 10px">
+                                <div class="col-lg-12">
+                                    <div ng-repeat="commuicate in communicates" class="panel panel-default" style="background: lightgrey">
+                                        <div class="panel-body">
+                                            <b>{{ commuicate.Created_by }}</b>
+                                            <div>
+                                                <p>{{ commuicate.Created_at | date:'dd-MM-yyyy HH:mm:ss' }}</p>
+                                                {{ commuicate.Beschrijving }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<div class="modal modalWindow">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="addFase()">
+                <div class="form-group">
+                    <label for="naam">Naam</label>
+                    <input type="text" class="form-control" id="naam" ng-model="fase.naam" placeholder="Enter naam" required>
+                </div>
+                <div class="form-group">
+                    <label>Planning</label>
+                    <!--<md-content>-->
+                        <!--<md-datepicker ng-model="fase.planning" md-placeholder="Enter planning" ng-required="true"></md-datepicker>-->
+                    <!--</md-content>-->
+
+                    <input ng-model="fase.planning"
+                           datepicker
+                           type="text"
+                           id="date"
+                           required
+                           class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="doel">Doel</label>
+                    <input type="text" class="form-control" id="doel" ng-model="fase.doel" placeholder="Enter doel" required>
+                </div>
+                <div class="form-group">
+                    <label for="resultaat">Resultaat</label>
+                    <input type="text" class="form-control" id="resultaat" ng-model="fase.resultaat" placeholder="Enter resultaat" required>
+                </div>
+                <div class="form-group">
+                    <label for="kwaliteit">Kwaliteit</label>
+                    <input type="text" class="form-control" id="kwaliteit" ng-model="fase.kwaliteit" placeholder="Enter kwaliteit" required>
+                </div>
+                <div class="form-group">
+                    <label for="afname">Afname</label>
+                    <input type="text" class="form-control" id="afname" ng-model="fase.afname" placeholder="Enter afname" required>
+                </div>
+                <div class="row" ng-show="fase.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ fase.error }}
+                    </div>
+                </div>
+                <button class="btn btn-info">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="updateAdditional(additionalFormPlus)">
+                <div class="form-group" ng-repeat="(key, value) in additionalForm">
+                    <label ng-if="key!='Id'">{{ key }}</label>
+                    <input ng-if="key!='Id'" type="text" class="form-control" ng-model="additionalForm[key]" required>
+                    <input ng-if="key=='Id'" type="hidden" value="{{ value }}">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

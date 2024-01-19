@@ -1,0 +1,183 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Rol</small>
+        </h1>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-8">
+                    <a href class="btn btn-success" ng-click="showDetails({})">Voeg nieuwe rol toe</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-12">
+                    <table ng-table-dynamic="tableParams with cols" show-filter="false"
+                           class="table table-bordered table-striped" style="font-size: 12px">
+                        <tr ng-repeat="row in $data">
+                            <td ng-repeat="col in $columns">
+                                <span ng-if="col.field!=='Dekkingsartikel'">
+                                      {{::row[col.field]}}
+                                </span>
+                                <span ng-if="col.field==='Dekkingsartikel'">
+                                    {{ getArtikel(row) }}
+                                </span>
+                            </td>
+
+
+                            <td ng-click="showDetails(row)" ng-if="row.Id">
+                                <i class="fa fa-edit"></i>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="saveForm()">
+
+                <div class="form-group">
+                    <label for="Omschrijving">Omschrijving</label>
+                    <input type="text" class="form-control"
+                           id="Omschrijving"
+                           placeholder="Omschrijving"
+                           ng-model="row.Omschrijving"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="Uursoort">Uursoort</label>
+                    <select ng-model="row.Uursoort"
+                            class="form-control"
+                            id="Uursoort"
+                            ng-options="option.key as option.value for option in uursoorten"
+                            required
+                            ng-change="changeSort()">
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dekkingsartikel">Dekkings artikel</label>
+                    <select chosen
+                            ng-model="row.dekkingsartikel"
+                            id="dekkingsartikel"
+                            data-placeholder-text-single="'Dekkings artikel'"
+                            class="form-control"
+                            ng-options="option.key as option.value for option in items">
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="row" ng-show="row.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ row.error }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+
+            <div ng-if="row.Id">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <a href class="btn btn-success" ng-click="showDetailsRates(row, {})">Nieuw tarief</a>
+                    </div>
+                </div>
+                <div class="row"
+                     ng-if="tableParamsTar !== null">
+                    <div class="col-lg-12">
+                        <table ng-table-dynamic="tableParamsTar with colsTar" show-filter="false"
+                               class="table table-bordered table-striped" style="font-size: 12px">
+                            <tr ng-repeat="rowRate in $data">
+                                <td ng-repeat="col in $columns" class="pullRight">
+                                    {{::rowRate[col.field]}}
+                                </td>
+                                <td ng-click="showDetailsRates(row, rowRate)" ng-if="rowRate.id && rowRate.aangepast === null">
+                                    <i class="fa fa-edit"></i>
+                                </td>
+                                <td ng-click="deleteRate(rowRate)" ng-if="rowRate.id && row.aangepast === null">
+                                    <i class="fa fa-trash"></i>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modalAdditionalRates">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="saveFormRates()">
+
+                <div class="form-group">
+                    <label for="kostprijsRate">Kostprijs</label>
+                    <input type="text" class="form-control"
+                           id="kostprijsRate"
+                           placeholder="kostprijs"
+                           ng-model="rowRate.kostprijs"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="prijsRate">Prijs</label>
+                    <input type="text" class="form-control"
+                           id="prijsRate"
+                           placeholder="prijs"
+                           ng-model="rowRate.prijs"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dekking">Dekking</label>
+                    <input type="text" class="form-control"
+                           id="dekking"
+                           placeholder="dekking"
+                           ng-model="rowRate.dekking"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="boekjaar">Boekjaar</label>
+                    <input type="text" class="form-control"
+                           id="boekjaar"
+                           placeholder="boekjaar"
+                           ng-model="rowRate.boekjaar"
+                           required>
+                </div>
+
+                <div class="row" ng-show="rowRate.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ rowRate.error }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

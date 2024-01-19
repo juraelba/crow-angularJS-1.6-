@@ -1,0 +1,38 @@
+<div class="form-group" ng-repeat="form in formUpdate">
+    <label for="{{ form.Veldlabel }}">{{ form.Veldlabel }}</label>
+    <input ng-if="form.Veldtype!='singleselect' && form.Veldtype!='multiselect' && form.Visible" type="{{ form.Veldtype=='int'?'number':'text' }}" class="form-control"
+           id="{{ form.Veldlabel }}"
+           placeholder="{{ form.Veldlabel }}"
+           ng-disabled="form.Readonly"
+           ng-model="model[form.Veldnaam]">
+    <select ng-if="form.Veldtype=='singleselect' && form.Visible" ng-model="model[form.Veldnaam]" ng-change="changeFase(form.Veldlabel)"
+            class="form-control"
+            ng-disabled="form.Readonly"
+            id="{{ form.Veldlabel }}"
+            ng-options="option.key as option.value for option in form.options">
+        <option></option>
+    </select>
+    <div>
+        <am-multiselect ng-if="form.Veldtype=='multiselect'"
+                        multiple="true" ms-selected="There are {{ model.afgestemdMet.length }} Afgestemd met(s) selected"
+                        id="AfgestemdMet"
+                        ng-model="model.afgestemdMet" ms-header="Select Afgestemd met"
+                        template-url="templates/multiselect.tmpl.html"
+                        options="team.key as team.value for team in model.teams"
+        ></am-multiselect>
+        <!--<am-multiselect ng-if="form.Veldtype=='multiselect' && form.Visible" multiple="true" ms-selected="There are {{ multiSelected.length }} {{ form.Veldlabel }}(s) selected"-->
+        <!--id="{{ form.Veldlabel }}"-->
+        <!--ng-model="multiSelected" ms-header="Select {{ form.Veldlabel }}"-->
+        <!--ng-disabled="form.Readonly"-->
+        <!--options="c.value for c in model.teams" template-url="templates/multiselect.tmpl.html"-->
+        <!--&gt;</am-multiselect>-->
+    </div>
+</div>
+<div class="row" ng-show="model.error">
+    <div class="col-xs-12 alert alert-danger text-center clsError">
+        {{ model.error }}
+    </div>
+</div>
+<div class="form-group" ng-if="button">
+    <button class="btn btn-success center-block" ng-click="save()">Bewaren</button>
+</div>

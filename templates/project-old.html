@@ -1,0 +1,424 @@
+<header class="main-header" ng-include src="'templates/header.html'">
+</header>
+<aside class="main-sidebar" ng-include src="'templates/menu.html'">
+</aside>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            <small>Project</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-8" style="border-right: 3px solid gray">
+                <div>
+                    <h2>Project</h2>
+                    <div class="row" style="padding: 20px">
+                        <div class="col-lg-2">
+                            <label for="Versie">Versie</label>
+                        </div>
+                        <div class="col-lg-4">
+                            <i class="fa fa-chevron-left" aria-hidden="true" style="cursor: pointer" ng-if="checkVersion('left');" ng-click="changeVersion('left')"></i>
+                            <input type="text" ng-model="versionId" disabled>
+                            <i class="fa fa-chevron-right" aria-hidden="true" style="cursor: pointer" ng-if="checkVersion('right');" ng-click="changeVersion('right')"></i>
+                        </div>
+                        <div class="col-lg-3">
+                            <a href ng-click="createNewVersion()" class="btn btn-info" id="Versie">Nieuwe versie</a>
+                        </div>
+                    </div>
+                    <form ng-submit="updateProject()">
+                        <div class="form-group" ng-repeat="form in projectForm">
+                            <label for="{{ form.Veldlabel }}">{{ form.Veldlabel }}</label>
+                            <input ng-if="form.Veldtype!='singleselect' && form.Veldtype!='multiselect' && form.Visible" type="{{ form.Veldtype=='int'?'number':'text' }}" class="form-control"
+                                   id="{{ form.Veldlabel }}"
+                                   placeholder="{{ form.Veldlabel }}"
+                                   ng-disabled="form.Readonly"
+                                   ng-model="project[form.Veldnaam]" >
+                            <select ng-if="form.Veldtype=='singleselect' && form.Visible" ng class="form-control" ng-disabled="form.Readonly" id="{{ form.Veldlabel }}">
+                                <option ng-repeat="option in form.options" value="{{ option.Key }}">
+                                    {{ option.Value }}
+                                </option>
+                            </select>
+                            <div>
+                                <am-multiselect ng-if="form.Veldtype=='multiselect' && form.Visible" multiple="true" ms-selected="There are {{ multiSelected.length }} {{ form.Veldlabel }}(s) selected"
+                                                id="{{ form.Veldlabel }}"
+                                                ng-model="multiSelected" ms-header="Select {{ form.Veldlabel }}"
+                                                ng-disabled="form.Readonly"
+                                                options="c.value for c in form.options" template-url="templates/multiselect.tmpl.html"
+                                ></am-multiselect>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label for="Team">Team</label>-->
+                            <!--<input type="text" class="form-control" id="Team" placeholder="Team" ng-model="project.Team" required>-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="Projectnaam">Projectnaam</label>-->
+                            <!--<input type="text" class="form-control" id="Projectnaam" placeholder="Projectnaam" ng-model="project.Projectnaam" required>-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="Programma">Programma</label>-->
+                            <!--<input type="text" class="form-control" id="Programma" placeholder="Programma" ng-model="project.Programma" required>-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="Projectmanager">Projectmanager</label>-->
+                            <!--<select class="form-control" id="Projectmanager" ng-model="project.Projectmanager"-->
+                                    <!--ng-options="option.Key as option.Value for option in project.managers">-->
+                                <!--<option></option>-->
+                            <!--</select>-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="AfgestemdMet">Afgestemd met</label>-->
+                            <!--<am-multiselect multiple="true" ms-selected="There are {{ project.afgestemdMet.length }} Afgestemd met(s) selected"-->
+                                            <!--id="AfgestemdMet"-->
+                                            <!--ng-model="project.afgestemdMet" ms-header="Select Afgestemd met"-->
+                                            <!--template-url="templates/multiselect.tmpl.html"-->
+                                            <!--options="team.key as team.value for team in project.teams"-->
+                            <!--&gt;</am-multiselect>-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="AutorisatieDoor">Autorisatie door</label>-->
+                            <!--<input type="text" class="form-control" id="AutorisatieDoor" placeholder="Autorisatie door" ng-model="project['Autorisatie door']" required>-->
+                        <!--</div>-->
+                        <div class="row" ng-show="project.error">
+                            <div class="col-xs-12 alert alert-danger text-center clsError">
+                                {{ project.error }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success center-block">Bewaren</button>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <h2>Details</h2>
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#1" ng-click="$event.preventDefault()" data-toggle="tab">Fases</a>
+                        </li>
+                        <li>
+                            <a href="#2" ng-click="$event.preventDefault()" data-toggle="tab">Begroting opbr.</a>
+                        </li>
+                        <li>
+                            <a href="#3" ng-click="$event.preventDefault()" data-toggle="tab">Begroting kst</a>
+                        </li>
+                        <li>
+                            <a href="#4" ng-click="$event.preventDefault()" data-toggle="tab">Begroting resultaat</a>
+                        </li>
+                        <li>
+                            <a href="#5" ng-click="$event.preventDefault()" data-toggle="tab">Begroting financiering</a>
+                        </li>
+                        <li>
+                            <a href="#6" ng-click="$event.preventDefault()" data-toggle="tab">Risico's</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="1">
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <a href ng-click="showFaseForm()" class="btn btn-success">Nieuwe fase</a>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <table ng-table-dynamic="faseDetails with cols" show-filter="false" class="table table-bordered table-striped">
+                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="2">
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="fase">Fase</label>
+                                        <select id="fase" class="form-control" ng-model="totalFase" ng-change="changeFase('total')"
+                                                ng-options="option.key as option.value for option in fases">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="total_fase">Totale opbrengsten fase</label>
+                                        <input type="text" class="form-control" id="total_fase" ng-model="opbrengstenFase" placeholder="Totale opbrengsten fase" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="total_project">Totale opbrengsten project</label>
+                                        <input type="text" class="form-control" id="total_project" ng-model="opbrengstenProject" placeholder="Totale opbrengsten project" disabled>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="active">
+                                            <a href="#total-1" ng-click="$event.preventDefault()" data-toggle="tab">Uren</a>
+                                        </li>
+                                        <li>
+                                            <a href="#total-2" ng-click="$event.preventDefault()" data-toggle="tab">OOP</a>
+                                        </li>
+                                        <li>
+                                            <a href="#total-3" ng-click="$event.preventDefault()" data-toggle="tab">Kennis</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="total-1">
+                                            <div class="row" style="padding-top: 20px">
+                                                <div class="col-lg-12">
+                                                    <table ng-table-dynamic="Uren with UrenCols" show-filter="false" class="table table-bordered table-striped">
+                                                        <tr ng-repeat="row in $data" >
+                                                            <td ng-repeat="col in $columns" ng-click="showAdditional(row, 'putOpbrengstenUren', false)">{{::row[col.field]}}</td>
+                                                            <td ng-if="true">
+                                                                <a href class="btn btn-info" ng-click="showAdditional(row, 'postOpbrengstenUren', true)"><i class="fa fa-plus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="total-2">
+                                            <div class="row" style="padding-top: 20px">
+                                                <div class="col-lg-12">
+                                                    <table ng-table-dynamic="OOP with OOPCols" show-filter="false" class="table table-bordered table-striped">
+                                                        <tr ng-repeat="row in $data">
+                                                            <td ng-repeat="col in $columns" ng-click="showAdditional(row, 'putOpbrengstenOOP', false)">{{::row[col.field]}}</td>
+                                                            <td ng-if="true">
+                                                                <a href class="btn btn-info" ng-click="showAdditional(row, 'postOpbrengstenOOP', true)"><i class="fa fa-plus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="total-3">
+                                            <div class="row" style="padding-top: 20px">
+                                                <div class="col-lg-12">
+                                                    <table ng-table-dynamic="Kennis with KennisCols" show-filter="false" class="table table-bordered table-striped">
+                                                        <tr ng-repeat="row in $data">
+                                                            <td ng-repeat="col in $columns" ng-click="showAdditional(row, 'putOpbrengstenKennis', false)">{{::row[col.field]}}</td>
+                                                            <td ng-if="true">
+                                                                <a href class="btn btn-info" ng-click="showAdditional(row, 'postOpbrengstenKennis', true)"><i class="fa fa-plus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="3">
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="fase_kst">Fase</label>
+                                        <select id="fase_kst" class="form-control" ng-model="kostenFase" ng-change="changeFase('kosten')"
+                                                ng-options="option.key as option.value for option in fases">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="kosten_fase">Totale kosten fase</label>
+                                        <input type="text" class="form-control" id="kosten_fase" ng-model="totalKostenFase" placeholder="Totale kosten fase" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="kosten_project">Totale kosten project</label>
+                                        <input type="text" class="form-control" id="kosten_project" ng-model="totalKostenProject" placeholder="Totale kosten project" disabled>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="active">
+                                            <a href="#kst-1" ng-click="$event.preventDefault()" data-toggle="tab">Uren</a>
+                                        </li>
+                                        <li>
+                                            <a href="#kst-2" ng-click="$event.preventDefault()" data-toggle="tab">OOP</a>
+                                        </li>
+                                        <li>
+                                            <a href="#kst-3" ng-click="$event.preventDefault()" data-toggle="tab">Dekkingsbijdrage</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="kst-1">
+                                            <div class="row" style="padding-top: 20px">
+                                                <div class="col-lg-12">
+                                                    <table ng-table-dynamic="KostenUren with KostenUrenCols" show-filter="false" class="table table-bordered table-striped">
+                                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="kst-2">
+                                            <div class="row" style="padding-top: 20px">
+                                                <div class="col-lg-12">
+                                                    <table ng-table-dynamic="KostenOOP with KostenOOPCols" show-filter="false" class="table table-bordered table-striped">
+                                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="kst-3">
+                                            <div class="row" style="padding-top: 20px">
+                                                <div class="col-lg-12">
+                                                    <table ng-table-dynamic="KostenDekkin with KostenDekkinCols" show-filter="false" class="table table-bordered table-striped">
+                                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="4">
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <table ng-table-dynamic="resultaat with resultaatCols" show-filter="false" class="table table-bordered table-striped">
+                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="5">
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <table ng-table-dynamic="Financiering with FinancieringCols" show-filter="false" class="table table-bordered table-striped">
+                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="6">
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-lg-12">
+                                    <table ng-table-dynamic="Risicos with RisicosCols" show-filter="false" class="table table-bordered table-striped">
+                                        <tr ng-repeat="row in $data" ng-click="showAdditional(row)">
+                                            <td ng-repeat="col in $columns">{{::row[col.field]}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h2>Status</h2>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <button ng-class="project.Status=='Nieuw'?'btn btn-info': 'btn btn-btn-basic'">Nieuw</button>
+                                </div>
+                                <div class="col-lg-5">
+                                    <button ng-class="project.Status=='Goedgekeurd'?'btn btn-info': 'btn btn-btn-basic'">Goedgekeurd</button>
+                                </div>
+                                <div class="col-lg-4">
+                                    <button ng-class="project.Status=='Gesloten'?'btn btn-info': 'btn btn-btn-basic'">Gesloten</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h2>Communicatie</h2>
+                            <div class="row">
+                                <form ng-submit="addCommunicate()">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <textarea ng-model="project.beschrijving" class="form-control" rows="3" placeholder="Nieuwe notitie" required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-info pull-right">Aanmaken</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row" style="padding-top: 10px">
+                                <div class="col-lg-12">
+                                    <div ng-repeat="commuicate in communicates" class="panel panel-default" style="background: lightgrey">
+                                        <div class="panel-body">
+                                            <b>{{ commuicate.Created_by }}</b>
+                                            <div>
+                                                <p>{{ commuicate.Created_at | date:'dd-MM-yyyy HH:mm:ss' }}</p>
+                                                {{ commuicate.Beschrijving }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<div class="modal modalWindow">
+    <div class="modal-content">
+        <div class="modal-body">
+            <form ng-submit="addFase()">
+                <div class="form-group">
+                    <label for="naam">Naam</label>
+                    <input type="text" class="form-control" id="naam" ng-model="fase.naam" placeholder="Enter naam" required>
+                </div>
+                <div class="form-group">
+                    <label>Planning</label>
+                    <md-content>
+                        <md-datepicker ng-model="fase.planning" md-placeholder="Enter planning" ng-required="true"></md-datepicker>
+                    </md-content>
+                </div>
+                <div class="form-group">
+                    <label for="doel">Doel</label>
+                    <input type="text" class="form-control" id="doel" ng-model="fase.doel" placeholder="Enter doel" required>
+                </div>
+                <div class="form-group">
+                    <label for="resultaat">Resultaat</label>
+                    <input type="text" class="form-control" id="resultaat" ng-model="fase.resultaat" placeholder="Enter resultaat" required>
+                </div>
+                <div class="form-group">
+                    <label for="kwaliteit">Kwaliteit</label>
+                    <input type="text" class="form-control" id="kwaliteit" ng-model="fase.kwaliteit" placeholder="Enter kwaliteit" required>
+                </div>
+                <div class="form-group">
+                    <label for="afname">Afname</label>
+                    <input type="text" class="form-control" id="afname" ng-model="fase.afname" placeholder="Enter afname" required>
+                </div>
+                <div class="row" ng-show="fase.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ fase.error }}
+                    </div>
+                </div>
+                <button class="btn btn-info">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-body">
+            <form ng-submit="updateAdditional(additionalFormPlus)">
+                <div class="form-group" ng-repeat="(key, value) in additionalForm">
+                    <label ng-if="key!='Id'">{{ key }}</label>
+                    <input ng-if="key!='Id'" type="text" class="form-control" ng-model="additionalForm[key]" required>
+                    <input ng-if="key=='Id'" type="hidden" value="{{ value }}">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

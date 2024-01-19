@@ -1,0 +1,33 @@
+{
+  "name": "PID",
+  "main": "",
+  "authors": [
+    "Arman"
+  ],
+  "license": "MIT",
+  "moduleType": [],
+  "homepage": "",
+  "dependencies": {
+    "jquery": "~3.2.1",
+    "jquery-ui": "^1.12.1",
+    "angular": "~1.6.4",
+    "angular-route": "~1.6.4",
+    "bootstrap": "~3.3.7",
+    "requirejs": "~2.3.3",
+    "ng-table": "1.0.0",
+    "amitava82-angular-multiselect": "^1.2.0",
+    "angular-material": "^1.1.4",
+    "requirejs-domready": "latest",
+    "moment-js": "^0.7.2",
+    "angular-chosen-localytics": "^1.7.0",
+    "textarea-autosize": "^0.4.2",
+    "chosen": "^1.7.0",
+    "underscore": "^1.8.3",
+    "angular-flash-alert": "^2.4.0",
+    "angular-soap": "^2.1.2",
+    "ngBootbox": "^0.2.0",
+    "angular-tooltips": "^1.2.2",
+    "angular-chart.js": "^1.1.1",
+    "ng-table-excel-export": "*"
+  }
+}

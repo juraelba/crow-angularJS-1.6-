@@ -1,0 +1,76 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Verantwoording</small>
+        </h1>
+        <div class="row">
+            <div class="container">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Team">Team</label>
+                        <select chosen
+                                ng-model="team"
+                                id="Team"
+                                data-placeholder-text-single="'Choose a Team'"
+                                class="form-control"
+                                ng-options="option.key as option.value for option in teams">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Project">Project</label>
+                        <select chosen
+                                ng-model="project"
+                                data-placeholder-text-single="'Choose a Project'"
+                                class="form-control"
+                                id="Project"
+                                ng-options="option.key as option.value for option in projects">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Fase">Fase</label>
+                        <select chosen
+                                ng-model="fase"
+                                data-placeholder-text-single="'Choose a Fase'"
+                                class="form-control"
+                                id="Fase"
+                                ng-options="option.key as option.value for option in fases">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-12" ng-show="data.tableCols.length > 0">
+                    <table ng-table-dynamic="data.table with data.tableCols" show-filter="false"
+                           class="table table-bordered report" style="font-size: 12px">
+                        <tr ng-repeat="row in $data" ng-show="row.visible">
+                            <td ng-click="showResultsDetails(row.type_filter, row.fase_key)"
+                                ng-if="row.plus"><i class="fa fa-plus"></i></td>
+                            <td ng-if="!row.plus">
+                                &nbsp;
+                            </td>
+                            <td ng-class="{'pullRight': pullRight.indexOf(col.field)<0}"
+                                ng-repeat="col in $columns"
+                                ng-style="row.bold && {'font-weight':'bold'}">
+                                {{::row[col.field]}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>

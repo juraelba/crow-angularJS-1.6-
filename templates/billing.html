@@ -1,0 +1,131 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Facturatie</small>
+        </h1>
+        <div class="row" style="padding-bottom: 20px">
+            <div class="container">
+                <div class="col-lg-12">
+                    <label class="detailsLabel">Einddatum</label>
+                    <!--<md-content>-->
+                        <!--<md-datepicker ng-model="filterDate" ng-change="setDate()"-->
+                                       <!--md-placeholder="Einddatum"></md-datepicker>-->
+                    <!--</md-content>-->
+
+                    <input ng-model="filterDate"
+                           datepicker
+                           type="text"
+                           id="date"
+                           required
+                           class="form-control"
+                           ng-change="setDate()">
+                </div>
+                <div class="col-lg-12" style="margin-top: 20px">
+                    <div class="form-group">
+                        <label class="detailsLabel">Project</label>
+                        <select chosen
+                                multiple
+                                ng-model="projectCode"
+                                data-placeholder-text-single="'Choose a project'"
+                                class="form-control"
+                                ng-change="projectChanged()"
+                                id="projectCode"
+                                ng-options="option.key as option.value for option in projects">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <flash-message duration="2000"></flash-message>
+            <div class="container">
+                <div class="col-lg-12">
+                    <md-checkbox
+                            ng-show="showCheckbox"
+                            aria-label="0"
+                            md-no-ink
+                            ng-model="checkboxAll.all"
+                            ng-change="toggleId(0)"
+                            ng-true-value="1" ng-false-value="0"
+                            class="md-primary checkboxAll">
+                    </md-checkbox>
+                    <table ng-table-dynamic="tableParams with cols" show-filter="false"
+                           class="table table-bordered table-striped billing" style="font-size: 12px">
+                        <tr ng-repeat="row in $data" class="tr-billing{{ row.id }}">
+                            <td ng-if="true">
+                                <md-checkbox
+                                        aria-label="{{ row.id }}"
+                                        md-no-ink
+                                        ng-change="toggleId(row.id)"
+                                        ng-model="checkbox[row.id]"
+                                        ng-true-value="1" ng-false-value="0"
+                                        class="md-primary">
+                                </md-checkbox>
+                            </td>
+                            <td ng-if="true" class="plusRow toggleBilling"
+                                style="cursor:pointer;"
+                                ng-click="collapseRow(row)">
+                                <i class="fa fa-plus"></i>
+                            </td>
+                            <td ng-repeat="col in $columns">
+                                <span ng-if="col.field != 'Waarde'">
+                                    {{::row[col.field]}}
+                                </span>
+                                <span ng-if="col.field == 'Waarde'">
+                                    <input type="text"
+                                           class="form-control inputTable"
+                                           ng-model="row[col.field]"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-8">
+                    <a href class="btn btn-success" ng-click="showAdditional()">Factureren</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="saveBilling()">
+                <div class="form-group">
+                    <label>Boekjaar</label>
+                    <input type="number" class="form-control"
+                           ng-model="year"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label>Periode</label>
+                    <input type="text" class="form-control"
+                           ng-model="period"
+                           required>
+                </div>
+                <label class="detailsLabel">Factuurdatum</label>
+                <input ng-model="factuurdatum"
+                       datepicker
+                       type="text"
+                       id="factuurdatum"
+                       required
+                       class="form-control">
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Factureren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

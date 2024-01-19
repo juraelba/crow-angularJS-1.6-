@@ -1,0 +1,258 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Medewerkers</small>
+        </h1>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-8">
+                    <a href class="btn btn-success" ng-click="showDetails({})">Nieuwe medewerker</a>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" placeholder="Zoeken naar..." ng-model="search"
+                           ng-change="searching()"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="col-lg-12">
+                    <table ng-table-dynamic="tableParams with cols" show-filter="false"
+                           class="table table-bordered table-striped" style="font-size: 12px">
+                        <tr ng-repeat="row in $data | filter:search">
+                            <td ng-repeat="col in $columns">
+                                {{::row[col.field]}}
+                            </td>
+                            <td ng-click="showDetails(row)" ng-if="row.id">
+                                <i class="fa fa-edit"></i>
+                            </td>
+                            <td ng-click="deleteMedewerker(row)" ng-if="row.id">
+                                <i class="fa fa-trash"></i>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="saveForm()">
+                <div class="form-group">
+                    <label for="achternaam">Achternaam</label>
+                    <input type="text" class="form-control"
+                           id="achternaam"
+                           placeholder="Achternaam"
+                           ng-model="row.Achternaam"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control"
+                           id="email"
+                           placeholder="Email"
+                           ng-model="row.Email"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="person">Personeelsnummer</label>
+                    <input type="text" class="form-control"
+                           id="person"
+                           placeholder="Personeelsnummer"
+                           ng-model="row.Personeelsnummer"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="week">Uren per week</label>
+                    <input type="number"
+                           ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                           step="0.01"
+                           min="0"
+                           class="form-control"
+                           id="week"
+                           placeholder="Uren per week"
+                           ng-model="row['Uren per week']"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="voornaam">Voornaam</label>
+                    <input type="text" class="form-control"
+                           id="voornaam"
+                           placeholder="Voornaam"
+                           ng-model="row.Voornaam"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Datum uit dienst</label>
+                    <input ng-model="row['Datum uit dienst']"
+                           datepicker
+                           type="text"
+                           class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Datum in dienst</label>
+                    <input ng-model="row['Datum in dienst']"
+                           datepicker
+                           type="text"
+                           class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <md-checkbox
+                            md-no-ink aria-label="Direct"
+                            ng-model="row['Direct']"
+                            ng-true-value="true" ng-false-value="false"
+                            class="md-primary">
+                        <strong>Direct</strong>
+                    </md-checkbox>
+                </div>
+
+                <div class="row" ng-show="row.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ row.error }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+            <div ng-if="row.id">
+                <!-- <div class="row">
+                    <div class="col-lg-8">
+                        <a href class="btn btn-success" ng-click="show({})">Nieuwe normuren</a>
+                    </div>
+                </div> -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table ng-table-dynamic="tableParamsDetails with colsDetails"
+                               show-filter="false"
+                               class="table table-bordered table-striped"
+                               style="font-size: 12px">
+                            <tr ng-repeat="row in $data">
+                                <td ng-repeat="col in $columns">
+                                    <span>
+                                         {{::row[col.field]}}
+                                    </span>
+                                </td>
+                                <td ng-click="show(row)" ng-if="row.Id">
+                                    <i class="fa fa-edit"></i>
+                                </td>
+                                <td ng-click="deleteDetail(row)" ng-if="row.Id">
+                                    <i class="fa fa-trash"></i>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modalDetails">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="saveFormDetails()">
+
+                <div class="form-group">
+                    <label for="Achternaam">Achternaam</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Achternaam"
+                           ng-model="detail.Achternaam"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="normuren">Uren per week</label>
+                    <input type="number"
+                           ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                           step="0.01"
+                           min="0"
+                           class="form-control"
+                           placeholder="Uren per week"
+                           ng-model="detail.UrenPerWeek"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="Achternaam">Personeelsnummer</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Personeelsnummer"
+                           ng-model="detail.Personeelsnummer"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label>Ingangsdatum</label>
+                    <input ng-model="detail.Ingangsdatum"
+                           datepicker
+                           type="text"
+                           class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Einddatum</label>
+                    <input ng-model="detail.Einddatum"
+                           datepicker
+                           type="text"
+                           class="form-control">
+                </div>
+
+                <div class="row" ng-show="row.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ row.error }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal modalStartDate">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="saveWithStartDate()">
+
+                <div class="form-group">
+                    <label>Ingangsdatum wijzigingen</label>
+                    <input ng-model="startDate"
+                           datepicker
+                           type="text"
+                           class="form-control">
+                </div>
+
+                <div class="row" ng-show="row.error">
+                    <div class="col-xs-12 alert alert-danger text-center clsError">
+                        {{ errorStartDate }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

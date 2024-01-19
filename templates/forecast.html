@@ -1,0 +1,438 @@
+<div class="page-header">
+    <section class="content-header">
+        <h1>
+            <small>Forecast</small>
+        </h1>
+    </section>
+    <div class="row">
+        <div class="container">
+            <!--<div class="col-md-4">-->
+            <!--<div class="form-group">-->
+            <!--<label for="Team">Team</label>-->
+            <!--<select ng-model="team"-->
+            <!--id="Team"-->
+            <!--allow-single-deselect="true"-->
+            <!--data-placeholder-text-single="'Choose a Team'"-->
+            <!--class="form-control"-->
+            <!--ng-options="option.key as option.value for option in teams"-->
+            <!--chosen="">-->
+            <!--<option></option>-->
+            <!--</select>-->
+            <!--</div>-->
+            <!--</div>-->
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Project">Project</label>
+                    <select ng-model="project"
+                            allow-single-deselect="true"
+                            data-placeholder-text-single="'Choose a Project'"
+                            class="form-control"
+                            id="Project"
+                            ng-options="option.key as option.value for option in projects"
+                            chosen="">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Fase">Fase</label>
+                    <select ng-model="fase"
+                            allow-single-deselect="true"
+                            data-placeholder-text-single="'Choose a Fase'"
+                            class="form-control"
+                            id="Fase"
+                            ng-options="option.key as option.value for option in fases"
+                            chosen="">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content">
+
+        <div class="row detailsRow" ng-if="project">
+            <div class="col-lg-1">
+                <label for="Versie" class="detailsLabel">Versie</label>
+            </div>
+            <div class="col-lg-1" style="width: 38px;">
+                <i class="fa fa-chevron-left leftIcon"
+                   aria-hidden="true"
+                   ng-if="checkVersion('left');"
+                   ng-click="changeVersion('left')"></i>
+            </div>
+            <div class="col-lg-1" style="width: 65px;">
+                <input type="text" class="form-control versionInput" ng-model="versionValue" disabled>
+            </div>
+            <div class="col-lg-1" style="width: 20px;">
+                <i class="fa fa-chevron-right rightIcon"
+                   aria-hidden="true"
+                   ng-if="checkVersion('right');"
+                   ng-click="changeVersion('right')"></i>
+            </div>
+
+            <div class="col-md-2">
+                <a href ng-click="createNewVersion()" class="btn btn-info" id="Versie">Nieuwe versie</a>
+            </div>
+
+            <div class="col-md-2">
+                <a href ng-click="removeVersion()" ng-hide="updateForecastVersie.status" class="btn btn-info">Verwijder versie</a>
+            </div>
+        </div>
+
+        <fieldset ng-disabled="updateForecastVersie.status">
+            <div class="row detailsRow" ng-if="project">
+
+                <div class="col-md-1">
+                    <label class="detailsLabel">Datum</label>
+                </div>
+                <div class="col-md-3">
+                    <md-content>
+                        <!--<md-datepicker ng-model="updateForecastVersie['datum']"-->
+                                       <!--md-placeholder="Enter date"></md-datepicker>-->
+
+                        <input ng-model="updateForecastVersie['datum']"
+                               datepicker
+                               type="text"
+                               id="date"
+                               class="form-control">
+                    </md-content>
+                </div>
+
+                <div class="col-md-1">
+                    <label class="detailsLabel">Status</label>
+                </div>
+                <div class="col-md-2">
+                    <select ng-model="updateForecastVersie.status"
+                            class="form-control"
+                            ng-options="obj.key as obj.value for obj in statuses">
+                    </select>
+                </div>
+
+                <div class="col-md-1">
+                    <label class="detailsLabel">Herziene percentage</label>
+                </div>
+                <div class="col-md-2">
+                    <input type="text"
+                           class="form-control"
+                           ng-model="updateForecastVersie.percentage"/>
+                </div>
+
+                <div class="col-md-2">
+                    <a href ng-click="updateVersion()" class="btn btn-info"
+                       ng-hide="updateForecastVersie.status"
+                       id="Bewaren">Bewaren</a>
+                </div>
+            </div>
+
+            <div class="row detailsRow" ng-if="project">
+                <div class="col-md-2">
+                    <label class="detailsLabel">Onderbouwing</label>
+                </div>
+                <div class="col-md-10">
+                <textarea type="text"
+                          class="form-control"
+                          ng-model="updateForecastVersie['onderbouwing']">
+                </textarea>
+                </div>
+                <div class="clearfix"></div>
+                <hr>
+            </div>
+
+            <div class="row" ng-if="data.tableCols.length > 0">
+                <div class="container">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <a href ng-click="toggleTable()">
+                                    <i class="fa fa-toggle-on fa-3x" aria-hidden="true" ng-show="collapsed"></i>
+                                    <i class="fa fa-toggle-off fa-3x" aria-hidden="true" ng-show="!collapsed"></i>
+                                </a>
+                            </div>
+                            <div class="col-md-2">
+                                <input ng-checked="toonRegels" ng-click="toonRegelsReverse()" type="checkbox"> Toon 0
+                                regels
+                            </div>
+                            <div class="col-md-4 pull-right project-progress">
+                            <span class="task">
+                                <span class="desc">Project percentage</span>
+                                <span class="percent">{{ projectPercentage }}%</span>
+                            </span>
+                                <span class="progress">
+                                <span ng-style="{'width': projectPercentage + '%'}"
+                                      class="progress-bar progress-bar-danger"
+                                      aria-valuenow="projectPercentage" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="sr-only">{{ projectPercentage }}% Complete</span>
+                                </span>
+                            </span>
+                            </div>
+                        </div>
+                        <flash-message duration="2000"></flash-message>
+                        <table ng-table-dynamic="data.table with data.tableCols" show-filter="false"
+                               class="table table-bordered forecast table-scroll" style="font-size: 12px">
+                            <tr ng-repeat="(keyRow, row) in $data"
+                                ng-show="(collapsed || row.bold) && checkRowForShow(row)">
+                                <!--<td ng-click="showResultsDetails(row.type_filter, row.fase_key, row.header_key, row.type_key)"-->
+                                <!--&gt;<i class="fa fa-plus"></i></td>-->
+                                <!--<td ng-if="!row.plus">-->
+
+                                <!--</td>-->
+                                <td ng-class="{'pullRight': pullRight.indexOf(col.field)<0}"
+                                    ng-repeat="col in $columns"
+                                    ng-style="row.bold && {'font-weight':'bold'}">
+                                <span ng-if="forFilter.indexOf(col.field)<0">
+                                    <span ng-hide="col.field == 'Type' && !row.bold"
+                                          ng-style="(VFBSum && col.field == 'Verschil Forecast - Begroting' && keyRow  == 0)&& {'color':'red'}">
+                                        {{::row[col.field]}}
+                                    </span>
+                                </span>
+                                    <span ng-if="forFilter.indexOf(col.field)>=0 && !row.bold">
+                                    <input type="text"
+                                           ng-blur="getFilter(row)"
+                                           class="form-control inputTable"
+                                           ng-model="row[col.field]"
+                                           ng-disabled="checkDisabled(row, col.field)"/>
+                                </span>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="pull-right"
+                             ng-style="VFBSum && {'color':'red'}">
+                            Totaal te financieren: {{ data.table.data[0]['Verschil Forecast - Begroting'] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-if="projectShow">
+                <div class="container">
+                    <div class="col-lg-12">
+                        <a href ng-click="toggleForm()">
+                            <i class="fa fa-toggle-on fa-3x" aria-hidden="true" ng-show="formShow"></i>
+                            <i class="fa fa-toggle-off fa-3x" aria-hidden="true" ng-show="!formShow"></i>
+                        </a>
+                        <form ng-show="formShow" class="animate-show-hide">
+                            <fieldset ng-disabled="true">
+                                <!--<form-create form="page.details.pageForm" model="model"></form-create>-->
+                                <div class="form-group">
+                                    <label for="projectcode">Projectcode</label>
+                                    <input type="text" class="form-control"
+                                           id="projectcode"
+                                           placeholder="Projectcode"
+                                           ng-model="newModel.projectcode">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="team">Team</label>
+                                    <select ng-model="newModel.TeamID"
+                                            class="form-control"
+                                            id="team"
+                                            ng-options="option.key as option.value for option in teams">
+                                        <option></option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="projectnaam">Projectnaam</label>
+                                    <input type="text" class="form-control"
+                                           id="projectnaam"
+                                           placeholder="Projectnaam"
+                                           ng-model="newModel.Projectnaam">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="projectmanager">Projectmanager</label>
+                                    <select ng-model="newModel.Projectmanager"
+                                            class="form-control"
+                                            id="projectmanager"
+                                            ng-options="option.key as option.value for option in projectmanager">
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="opdrachtgever">Opdrachtgever</label>
+                                    <input type="text" class="form-control"
+                                           id="opdrachtgever"
+                                           placeholder="Opdrachtgever"
+                                           ng-model="newModel.opdrachtgever">
+                                </div>
+
+                            </fieldset>
+                            <div>
+                                <label>Afgestemd met</label>
+                                <am-multiselect multiple="true"
+                                                ms-selected="There are {{ newModel.afgestemdMet.length }} Afgestemd met(s) selected"
+                                                ng-model="newModel.afgestemdMet"
+                                                ms-header="There are {{ countAfgestemdMet() }} Afgestemd met(s) selected"
+                                                template-url="templates/multiselect.tmpl.html"
+                                                options="team.key as team.value for team in afgestemdMet"
+                                ></am-multiselect>
+                            </div>
+
+                            <fieldset ng-disabled="true">
+                                <div class="form-group">
+                                    <label for="projecttype">Projecttype</label>
+                                    <select ng-model="newModel.projecttype"
+                                            class="form-control"
+                                            id="projecttype">
+                                        <option value="kennisontwikkeling">kennisontwikkeling</option>
+                                        <option value="kennisexploitatie">kennisexploitatie</option>
+                                        <option value="combinatie">combinatie</option>
+                                        <option value="intern">intern</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="achtergrond">Achtergrond / aanleiding</label>
+                                    <md-input-container class="md-block">
+                            <textarea ng-model="newModel.achtergrond"
+                                      mb-autosize
+                                      md-select-on-focus
+                                      id="achtergrond"
+                                      aria-label="Achtergrond / aanleiding"></textarea>
+                                    </md-input-container>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="probleemstelling">Probleemstelling</label>
+                                    <md-input-container class="md-block">
+                        <textarea md-select-on-focus
+                                  md-autosize
+                                  id="probleemstelling"
+                                  aria-label="Probleemstelling"
+                                  ng-model="newModel.probleemstelling"></textarea>
+                                    </md-input-container>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="doel">Doel van het project</label>
+                                    <md-input-container class="md-block">
+                        <textarea md-select-on-focus
+                                  md-autosize
+                                  id="doel"
+                                  aria-label="Doel van het project"
+                                  ng-model="newModel.doel"></textarea>
+                                    </md-input-container>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-if="faseShow">
+                <div class="container">
+                    <div class="col-lg-12">
+                        <a href ng-click="toggleForm()">
+                            <i class="fa fa-toggle-on fa-3x" aria-hidden="true" ng-show="formShow"></i>
+                            <i class="fa fa-toggle-off fa-3x" aria-hidden="true" ng-show="!formShow"></i>
+                        </a>
+                        <form ng-show="formShow" class="animate-show-hide">
+                            <fieldset ng-disabled="true">
+                                <div class="form-group" ng-repeat="form in faseForm">
+                                    <label for="{{ form.Fieldlabel }}">{{ form.Fieldlabel=='Resultaat'?'Minimaal
+                                        opleverniveau':form.Fieldlabel }}</label>
+                                    <input ng-if="form.Fieldtype!='singleselect' && form.Fieldtype!='multiselect' && form.Fieldtype!='date' && form.Visible
+                                        && form.Fieldname != 'Doel' && form.Fieldname != 'Resultaat' &&
+                                        form.Fieldname !='Draagvlak' && form.Fieldname !='Kwaliteit' && form.Fieldname !='Afname'"
+                                           type="{{ form.Fieldtype=='int'?'number':'text' }}"
+                                           class="form-control"
+                                           id="{{ form.Fieldlabel }}"
+                                           placeholder="{{ form.Fieldlabel }}"
+                                           ng-disabled="form.Readonly"
+                                           ng-model="formActive[form.Fieldname]"
+                                           required>
+                                    <md-input-container class="md-block">
+                                <textarea ng-if="form.Fieldtype=='text' && form.Visible && (form.Fieldname=='Doel' || form.Fieldname=='Resultaat' ||
+                                 form.Fieldname=='Draagvlak' || form.Fieldname=='Kwaliteit' || form.Fieldname=='Afname')"
+                                          rows="5"
+                                          mb-autosize
+                                          md-select-on-focus
+                                          md-select-on-focus
+                                          id="{{ form.Fieldlabel }}"
+                                          aria-label="{{ form.Fieldlabel }}"
+                                          ng-disabled="form.Readonly"
+                                          ng-model="formActive[form.Fieldname]"
+                                          required></textarea>
+                                    </md-input-container>
+                                    <!--<md-content ng-if="form.Fieldtype=='date' && form.Visible">-->
+                                        <!--<md-datepicker ng-model="formActive[form.Fieldname]"-->
+                                                       <!--id="{{ form.Fieldlabel }}"-->
+                                                       <!--md-placeholder="{{ form.Fieldlabel }}"-->
+                                                       <!--ng-required="true"-->
+                                        <!--&gt;</md-datepicker>-->
+                                    <!--</md-content>-->
+                                    <input ng-if="form.Fieldtype=='date' && form.Visible"
+                                           ng-model="formActive[form.Fieldname]"
+                                           datepicker
+                                           type="text"
+                                           id="{{ form.Fieldlabel }}"
+                                           required
+                                           class="form-control">
+                                    <select ng-if="form.Fieldtype=='singleselect' && form.Visible"
+                                            ng-model="formActive[form.Fieldname]"
+                                            class="form-control"
+                                            ng-disabled="form.Readonly"
+                                            id="{{ form.Fieldlabel }}"
+                                            ng-options="option.key as option.value for option in form.options"
+                                            required>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <md-checkbox
+                                            md-no-ink aria-label="Educatie"
+                                            ng-model="formActive['Educatie']"
+                                            ng-true-value="'Ja'" ng-false-value="'Nee'"
+                                            class="md-primary">
+                                        <strong>Zichtbaar voor team educatie?</strong>
+                                    </md-checkbox>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </section>
+</div>
+
+<div ng-include src="'templates/footer.html'">
+</div>
+
+<div class="modal modalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="addForecastVersie()">
+                <div class="form-group">
+                    <label for="Omschrijving">Omschrijving</label>
+                    <md-input-container class="md-block">
+                            <textarea ng-model="Omschrijving"
+                                      mb-autosize
+                                      md-select-on-focus
+                                      id="Omschrijving"
+                                      aria-label="Omschrijving"
+                                      required
+                            ></textarea>
+                    </md-input-container>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success center-block">Bewaren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal redModalAdditional">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close redModalAdditionalClose">&times;</span>
+        </div>
+        <div class="modal-body label-danger">
+            Voor dit project moet extra financiering aangevraagd worden.
+        </div>
+    </div>
+</div>

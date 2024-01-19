@@ -1,0 +1,78 @@
+<section class="content-header">
+    <h1>
+        <small>All hours</small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="container">
+            <flash-message duration="2000"></flash-message>
+            <div class="col-xs col-lg-8">
+                    <label class="detailsLabel">Einddatum</label>
+
+                    <input ng-model="filterDateBegin"
+                           datepicker
+                           type="text"
+                           id="dateBegin"
+                           required
+                           class="form-control"
+                           ng-change="filterData()">
+
+                    <input ng-model="filterDateEnd"
+                           datepicker
+                           type="text"
+                           id="dateEnd"
+                           required
+                           class="form-control"
+                           ng-change="filterData()">
+            </div>
+            <!--<div class="col-xs col-lg-4">
+                <input type="text" class="form-control" placeholder="Zoeken naar..."
+                       ng-model="search" ng-change="searching()"/>
+            </div>-->
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="container">
+            <div class="col-lg-12">
+                <button ng-click="rejectAll()" class="btn btn-warning">Reject</button>
+            </div>
+            <div class="col-lg-12">
+                <table ng-table-dynamic="hoursTable with cols"
+                       show-filter="true"
+                       class="table table-bordered table-striped"
+                       style="font-size: 12px">
+                    <tr ng-repeat="row in $data track by row.Id">
+                        <td>
+                            <md-checkbox
+                                    aria-label="{{ row.Id }}"
+                                    md-no-ink
+                                    ng-change="toggleId(row.Id)"
+                                    ng-model="checkbox[row.Id]"
+                                    ng-true-value="1"
+                                    ng-false-value="0"
+                                    class="md-primary">
+                            </md-checkbox>
+                        </td>
+
+                        <td data-title="'Id'">{{row.Id}}</td>
+                        <td data-title="'Medewerker'">{{row.medewerker}}</td>
+                        <td data-title="'Projectcode'">{{row.Projectcode}}</td>
+                        <td data-title="'Datum'">{{row.Datum}}</td>
+                        <td data-title="'Week'">{{row.Week}}</td>
+                        <td data-title="'Jaar'">{{row.jaar}}</td>
+                        <td data-title="'Uren'">{{row.Uren}}</td>
+                        <td data-title="'Status'">{{row.status}}</td>
+
+                        <!--                    <td ng-repeat="col in $columns">-->
+                        <!--                        {{::row[col.field]}}-->
+                        <!--                    </td>-->
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
